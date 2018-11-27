@@ -16,14 +16,32 @@ public class CreateScheduleHandler {
 	boolean createSchedule(String name, String author, String startDate, String endDate, String startTime, String endTime, int timePeriod) throws Exception {
 		if (logger != null) { logger.log("in createSchedule"); }
 		SchedulerDAO dao = new SchedulerDAO();
-		UUID sId = UUID.randomUUID();
+		String sId = this.genUUIDString();
+		String sCode = this.genCode(name + author);
+		String rCode = this.genCode(author + startDate + endDate + timePeriod );
+		
+		
 		// check if present
 		Schedule exist = dao.getSchedule(sId);
-		Schedule constant = new Constant (name, value);
+		Schedule Schedule = new Schedule (sId, name, author, sCode, rCode,);
 		if (exist == null) {
 			return dao.addConstant(constant);
 		} else {
 			return dao.updateConstant(constant);
 		}
 	}
+	
+	String genUUIDString() {
+		UUID u = UUID.randomUUID();
+		String s = u.toString();
+		return s;
+	}
+	
+	String genCode(String s) {
+		UUID u = UUID.fromString(s);
+		String i = u.toString();
+		String f = i.substring(0, 5);
+		return f;
+	}
+	
 }
