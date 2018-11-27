@@ -1,4 +1,4 @@
-package com.amazownaws.model;
+package com.amazonaws.model;
 
 import java.sql.Time;
 
