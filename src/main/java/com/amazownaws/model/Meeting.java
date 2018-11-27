@@ -1,4 +1,4 @@
-package model;
+package com.amazownaws.model;
 
 public class Meeting {
 	String id;
