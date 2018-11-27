@@ -1,6 +1,10 @@
 package com.amazonaws.lambda.demo;
 
+import java.sql.Time;
+import java.util.Date;
 import java.util.UUID;
+
+import org.joda.time.Days;
 
 import com.amazonaws.db.SchedulerDAO;
 import com.amazonaws.model.Schedule;
@@ -19,7 +23,6 @@ public class CreateScheduleHandler {
 		String sId = this.genUUIDString();
 		String sCode = this.genCode(name + author);
 		String rCode = this.genCode(author + startDate + endDate + timePeriod );
-		
 		
 		// check if present
 		Schedule exist = dao.getSchedule(sId);
@@ -43,5 +46,7 @@ public class CreateScheduleHandler {
 		String f = i.substring(0, 5);
 		return f;
 	}
+	
+	
 	
 }
