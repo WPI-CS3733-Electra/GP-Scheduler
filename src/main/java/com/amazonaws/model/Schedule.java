@@ -1,9 +1,9 @@
 package com.amazonaws.model;
 
-import java.sql.Date;
-import java.sql.Time;
+
 import java.util.ArrayList;
 
+import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
 public class Schedule {
@@ -13,13 +13,13 @@ public class Schedule {
 	String secretCode;
 	String releaseCode;
 	ArrayList<Day> d;
-	Date createdDate;
+	LocalDate createdDate;
 	int timePeriod;
 	LocalTime startTime;
 	LocalTime endTime;
 	
 	public Schedule(String id, String name, String author, String secretCode, String releaseCode,
-			ArrayList<Day> d, Date createdDate, int timePeriod, LocalTime startTime, LocalTime endTime) {
+			ArrayList<Day> d, LocalDate createdDate, int timePeriod, LocalTime startTime, LocalTime endTime) {
 		this.id = id;
 		this.name = name;
 		this.author = author;
