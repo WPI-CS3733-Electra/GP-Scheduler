@@ -15,7 +15,6 @@ import java.util.UUID;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
-import org.joda.time.Minutes;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.simple.JSONObject;
@@ -149,7 +148,7 @@ public class CreateScheduleHandler implements RequestStreamHandler{
 					body = event.toJSONString();  // this is only here to make testing easier
 				}
 			}
-		} catch (ParseException pe) {
+		} catch (org.json.simple.parser.ParseException pe) {
 			logger.log(pe.toString());
 			response = new CreateScheduleResponse("Bad Request:" + pe.getMessage(), 422);  // unable to process input
 	        responseJson.put("body", new Gson().toJson(response));
