@@ -2,37 +2,54 @@
 <html>
 <link rel="stylesheet" type="text/css" href="../css/industrious.css">
 <link rel="stylesheet" type="text/css" href="../css/extra.css">
+<script src="../js/jquery-3.3.1.min.js"></script>
+<script src="../js/organizer.js"></script>
 <style>
 	
 </style>
 <head>
-	<title>Sample Organizor</title>
+	<title>Sample Organizer</title>
 </head>
 <body class="is-menu-visible"> 
 	<div>
 		<nav id="menu">
-			<p>
+			<div>
 				<h3>Extend schedule:</h3>
 				from:
 				<input type="date" style="color: black;"> <br/>
 				to:
 				<input type="date" style="color: black;">
 				<input type="submit" style="width: 200px; margin: 40px" value="Confirm">
-			</p>
-			<p>	
+			</div>
+			<div>	
 				<h3>Retrieve meeting schedule by code:</h3>
 				<input style="width: 300px; color: black; background-color: white"type="text" id="secretcode" name="secretcode">
 				<input type="submit" style="width: 200px; margin: 40px" value="Confirm">
-			</p>
-			<p>
-				<h3>Or,</h3>
-				<input type="submit" style="width: 200px; margin-left: 40px" value="Create New One">
-			</p>
-
+			</div>
+			<div>
+				<h3>Or, create one </h3>
+				<form name="createForm" method="POST">
+					schedule name:<input name="name" value="Schedule name" />
+					author:<input name="author" value="Author" />
+					start date:<input name="startDate" type="date"/>
+					end date:<input name="endDate" type="date"/>
+					daily start time:<input name="startTime" type="time"/>
+					daily end time:<input name="endTime" type="time"/>
+					timesolt duration:
+					<select name="duration">
+						<option>15</option>
+						<option>20</option>
+						<option>30</option>
+						<option>60</option>
+					</select>
+					<input type="button" value="Create"  onClick="handleCreate(this)">
+				</form>
+			</div>
+			
 		</nav>
 	</div>
 	<div id="main" class="left">	
-		<h1>A sample organizor page</h1>
+		<h1>A sample organizer page</h1>
 		<h3>Schedule name: [NAME HERE] | Secretc code: [CODE HERE]</h3>
 		<div style="text-align: right;">
 			<a class="button small" href="#">previous week</a>
@@ -40,7 +57,7 @@
 			<input type="date">
 			<a class="button small" href="#">jump</a>
 		</div>
-		<table border="1" cellpadding="5" style="margin: 50px; width: 1400px;"> 
+		<table id="schedule" border="1" cellpadding="5" style="margin: 50px; width: 1400px;"> 
 			<caption> Scheduler </caption>
 			<thead>
 				<th>Time</th>
@@ -155,7 +172,5 @@
 				</tr>
 			</table>
 		</div>
-		<div>
-		</div>
 	</body>
-	</html>
+</html>

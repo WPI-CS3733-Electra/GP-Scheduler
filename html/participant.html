@@ -2,6 +2,7 @@
 <html>
 <link rel="stylesheet" type="text/css" href="../css/industrious.css">
 <link rel="stylesheet" type="text/css" href="../css/extra.css">
+<script src="../js/participant.js"></script>
 <head>
 	<title>Sample Participant</title>
 </head>
@@ -13,8 +14,8 @@
 				<input style="width: 300px; color: black; background-color: white"type="text" id="secretcode" name="secretcode">
 				<input type="submit" style="width: 200px; margin: 40px" value="Confirm">
 			</p>
-			<h3>Filtered by:</h3>
-			<p>
+			<h4>Search timesolots by:</h4>
+			<p>	
 				Years:
 				<select class="small" id="organizor" name="organizor">
 					<option>from</option>
@@ -56,79 +57,80 @@
 			<caption> Scheduler </caption>
 			<thead>
 				<th>Time</th>
-				<th>Sun<br/>18-Nov</th>
 				<th>Mon<br/>19-Nov</th>
 				<th>Tue<br/>20-Nov</th>
 				<th>Wed<br/>21-Nov</th>
 				<th>Thu<br/>22-Nov</th>
 				<th>Fri<br/>23-Nov</th>
-				<th>Sat<br/>24-Nov</th>
 			</thead>
 			
 			<tbody>
 				<tr>
 					<th>9:00-9:15</th>
 					<td>N/A</td>
-					<td>N/A</td>
 					<td><input type="submit" value="Free"></td>
-					<td>Rui Huang<br/><a href="">cancel</a></td>
-					<td>Zhanhong Huang<br/><a href="">cancel</a></td>
+					<td>Rui Huang<br/><a href="" onclick="handleCancel()">cancel</a></td>
+					<td>Zhanhong Huang<br/><a href="" onclick="handleCancel()">cancel</a></td>
 					<td><input type="submit" value="Free"></td>
-					<td>N/A</td>
 				</tr>
 				<tr>
 					<th>9:15-9:30</th>
 					<td>N/A</td>
-					<td>N/A</td>
 					<td><input type="submit" value="Free"></td>
 					<td><input type="submit" value="Free"></td>
-					<td>Ziqian Zeng<br/><a href="">cancel</a></td>
+					<td>Ziqian Zeng<br/><a href="" onclick="handleCancel()">cancel</a></td>
 					<td><input type="submit" value="Free"></td>
-					<td>N/A</td>
 				</tr>
 				<tr>
 					<th>9:30-9:45</th>
 					<td>N/A</td>
-					<td>N/A</td>
 					<td><input type="submit" value="Free"></td>
 					<td><input type="submit" value="Free"></td>
 					<td><input type="submit" value="Free"></td>
 					<td><input type="submit" value="Free"></td>
-					<td>N/A</td>
 				</tr>
 				<tr>
 					<th>9:45-10:00</th>
 					<td>N/A</td>
-					<td>N/A</td>
 					<td><input type="submit" value="Free"></td>
-					<td>Zonglin Peng<br/><a href="">cancel</a></td>
+					<td>Zonglin Peng<br/><a href="" onclick="handleCancel()">cancel</a></td>
 					<td><input type="submit" value="Free"></td>
 					<td><input type="submit" value="Free"></td>
-					<td>N/A</td>
 				</tr>
 				<tr>
 					<th>10:00-10:15</th>
 					<td>N/A</td>
-					<td>N/A</td>
 					<td><input type="submit" value="Free"></td>
 					<td><input type="submit" value="Free"></td>
 					<td><input type="submit" value="Free"></td>
 					<td><input type="submit" value="Free"></td>
-					<td>N/A</td>
 				</tr>
 				<tr>
 					<th>10:15-10:30</th>
 					<td>N/A</td>
-					<td>N/A</td>
 					<td><input type="submit" value="Free"></td>
 					<td><input type="submit" value="Free"></td>
 					<td><input type="submit" value="Free"></td>
 					<td><input type="submit" value="Free"></td>
-					<td>N/A</td>
 				</tr>
 			</table>
 		</div>
-		<div>
+		<div class="middle">
+			<h2>Searching Result:</h2>
+			<ul>
+				<li>
+					Nov. 26 | 10:15-10:30
+					<a href="">register</a>
+				</li>
+				<li>
+					Nov. 27 | 10:15-10:30
+					<a href="">register</a>
+				</li>
+				<li>
+					Nov. 28 | 10:15-10:30
+					<a href="">register</a>
+				</li>
+			</ul>
 		</div>
 	</body>
 	</html>
