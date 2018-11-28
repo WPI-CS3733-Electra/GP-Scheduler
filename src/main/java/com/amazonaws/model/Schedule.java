@@ -4,6 +4,8 @@ import java.sql.Date;
 import java.sql.Time;
 import java.util.ArrayList;
 
+import org.joda.time.LocalTime;
+
 public class Schedule {
 	String id;
 	String name;
@@ -13,11 +15,11 @@ public class Schedule {
 	ArrayList<Day> d;
 	Date createdDate;
 	int timePeriod;
-	Time startTime;
-	Time endTime;
+	LocalTime startTime;
+	LocalTime endTime;
 	
 	public Schedule(String id, String name, String author, String secretCode, String releaseCode,
-			ArrayList<Day> d, Date createdDate, int timePeriod, Time startTime, Time endTime) {
+			ArrayList<Day> d, Date createdDate, int timePeriod, LocalTime startTime, LocalTime endTime) {
 		this.id = id;
 		this.name = name;
 		this.author = author;
