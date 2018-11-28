@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
@@ -63,7 +64,7 @@ public class CreateScheduleHandler implements RequestStreamHandler{
 		
 		// check if present
 		Schedule exist = dao.getSchedule(sId);
-		Schedule Schedule = new Schedule (sId, name, author, sCode, rCode, days, LocalDate.now().toString(), timePeriod, startTime, endTime, startDate, endDate);
+		Schedule Schedule = new Schedule (sId, name, author, sCode, rCode, days, this.currentTimeString(), timePeriod, startTime, endTime, startDate, endDate);
 		if (exist == null) {
 			return dao.addSchedule(Schedule);
 		} else {
@@ -75,6 +76,12 @@ public class CreateScheduleHandler implements RequestStreamHandler{
 		UUID u = UUID.randomUUID();
 		String s = u.toString();
 		return s;
+	}
+	
+	String currentTimeString() {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+	    Date date = new Date();  
+	    return formatter.format(date).toString();  
 	}
 	
 	
