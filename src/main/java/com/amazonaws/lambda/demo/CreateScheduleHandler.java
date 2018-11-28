@@ -79,8 +79,8 @@ public class CreateScheduleHandler implements RequestStreamHandler{
 	
 	
 	int daysBetweenDates(String s1, String s2) throws ParseException{
-			Date d1 = new SimpleDateFormat("yyyy/MM/dd").parse(s1);
-			Date d2 = new SimpleDateFormat("yyyy/MM/dd").parse(s2);
+			Date d1 = new SimpleDateFormat("yyyy-MM-dd").parse(s1);
+			Date d2 = new SimpleDateFormat("yyyy-MM-dd").parse(s2);
 			return Days.daysBetween(
 	                new LocalDate(d1.getTime()), 
 	                new LocalDate(d2.getTime())).getDays();
