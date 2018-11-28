@@ -1,13 +1,10 @@
 package com.amazonaws.model;
 
-
 import java.util.ArrayList;
-
-import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
 
 public class Schedule {
 	String id;
+
 	String name;
 	String author;
 	String secretCode;
@@ -19,9 +16,26 @@ public class Schedule {
 	String endTime;
 	String startDate;
 	String endDate;
+
+	public Schedule() {
+	}
 	
-	public Schedule() {}
-	
+	public Schedule(String id, String name, String author, String secretCode, String releaseCode, ArrayList<Day> d,
+			String createdDate, int timePeriod, String startTime, String endTime, String startDate, String endDate) {
+		this.id = id;
+		this.name = name;
+		this.author = author;
+		this.secretCode = secretCode;
+		this.releaseCode = releaseCode;
+		this.d = d;
+		this.createdDate = createdDate;
+		this.timePeriod = timePeriod;
+		this.startTime = startTime;
+		this.endTime = endTime;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+
 	public String getId() {
 		return id;
 	}
@@ -102,19 +116,20 @@ public class Schedule {
 		this.endTime = endTime;
 	}
 
-	public Schedule(String id, String name, String author, String secretCode, String releaseCode,
-			ArrayList<Day> d, String createdDate, int timePeriod, String startTime, String endTime, String startDate, String endDate) {
-		this.id = id;
-		this.name = name;
-		this.author = author;
-		this.secretCode = secretCode;
-		this.releaseCode = releaseCode;
-		this.d = d;
-		this.createdDate = createdDate;
-		this.timePeriod = timePeriod;
-		this.startTime = startTime;
-		this.endTime = endTime;
+	public String getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(String startDate) {
 		this.startDate = startDate;
+	}
+
+	public String getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(String endDate) {
 		this.endDate = endDate;
 	}
+
 }
