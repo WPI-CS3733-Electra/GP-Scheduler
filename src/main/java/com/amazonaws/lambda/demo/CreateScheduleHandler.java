@@ -164,9 +164,9 @@ public class CreateScheduleHandler implements RequestStreamHandler{
 			CreateScheduleResponse resp;
 			try {
 				if (createSchedule(req.name, req.author, req.startDate,req.endDate, req.startTime, req.endTime, req.timePeriod)) {
-					resp = new CreateScheduleResponse("Successfully defined constant:" + req.name,sCode,rCode);
+					resp = new CreateScheduleResponse("Successfully defined constant:" + req.name,sCode,rCode,sId);
 				} else {
-					resp = new CreateScheduleResponse("Unable to create Schedule: " + req.name, 422);
+					resp = new CreateScheduleResponse("Unable to create Schedule: " + req.name, 405);
 				}
 			} catch (Exception e) {
 				resp = new CreateScheduleResponse("Unable to create Schedule: " + req.name + "(" + e.getMessage() + ")", 403);
