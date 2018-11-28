@@ -17,6 +17,8 @@ public class Schedule {
 	int timePeriod;
 	String startTime;
 	String endTime;
+	String startDate;
+	String endDate;
 	
 	public Schedule() {}
 	
@@ -101,7 +103,7 @@ public class Schedule {
 	}
 
 	public Schedule(String id, String name, String author, String secretCode, String releaseCode,
-			ArrayList<Day> d, String createdDate, int timePeriod, String startTime, String endTime) {
+			ArrayList<Day> d, String createdDate, int timePeriod, String startTime, String endTime, String startDate, String endDate) {
 		this.id = id;
 		this.name = name;
 		this.author = author;
@@ -112,5 +114,7 @@ public class Schedule {
 		this.timePeriod = timePeriod;
 		this.startTime = startTime;
 		this.endTime = endTime;
+		this.startDate = startDate;
+		this.endDate = endDate;
 	}
 }
