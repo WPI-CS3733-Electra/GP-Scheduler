@@ -50,10 +50,10 @@ public class CreateScheduleHandler implements RequestStreamHandler{
 		// Create the list of days, also the sub-structures.
 		for(int i = 0; i < numOfDays; i++) {
 			String dId = this.genUUIDString();
-			LocalDate d = this.calDate(startDate, i);
+			String d = this.calDate(startDate, i).toString();
 			ArrayList<Timeslot> ts = new ArrayList<Timeslot>();
 			for(int j = 0; j < numOfTs; j ++) {
-				LocalTime t = this.calBeginTime(startTime, timePeriod, j);
+				String t = this.calBeginTime(startTime, timePeriod, j).toString();
 				Timeslot timeslot = new Timeslot(this.genUUIDString(),t,dId,null);
 				ts.add(timeslot);
 			}
@@ -63,7 +63,7 @@ public class CreateScheduleHandler implements RequestStreamHandler{
 		
 		// check if present
 		Schedule exist = dao.getSchedule(sId);
-		Schedule Schedule = new Schedule (sId, name, author, sCode, rCode, days, LocalDate.now(), timePeriod, this.stringToTime(startTime), this.stringToTime(endTime));
+		Schedule Schedule = new Schedule (sId, name, author, sCode, rCode, days, LocalDate.now().toString(), timePeriod, startTime, endTime);
 		if (exist == null) {
 			return dao.addSchedule(Schedule);
 		} else {
@@ -79,8 +79,8 @@ public class CreateScheduleHandler implements RequestStreamHandler{
 	
 	
 	int daysBetweenDates(String s1, String s2) throws ParseException{
-			Date d1 = new SimpleDateFormat("dd/MM/yyyy").parse(s1);
-			Date d2 = new SimpleDateFormat("dd/MM/yyyy").parse(s2);
+			Date d1 = new SimpleDateFormat("yyyy/MM/dd").parse(s1);
+			Date d2 = new SimpleDateFormat("yyyy/MM/dd").parse(s2);
 			return Days.daysBetween(
 	                new LocalDate(d1.getTime()), 
 	                new LocalDate(d2.getTime())).getDays();

@@ -13,13 +13,13 @@ public class Schedule {
 	String secretCode;
 	String releaseCode;
 	ArrayList<Day> d;
-	LocalDate createdDate;
+	String createdDate;
 	int timePeriod;
-	LocalTime startTime;
-	LocalTime endTime;
+	String startTime;
+	String endTime;
 	
 	public Schedule(String id, String name, String author, String secretCode, String releaseCode,
-			ArrayList<Day> d, LocalDate createdDate, int timePeriod, LocalTime startTime, LocalTime endTime) {
+			ArrayList<Day> d, String createdDate, int timePeriod, String startTime, String endTime) {
 		this.id = id;
 		this.name = name;
 		this.author = author;
