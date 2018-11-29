@@ -63,7 +63,7 @@ public class CreateScheduleHandler implements RequestStreamHandler{
 		}
 		
 		// check if present
-		Schedule exist = dao.getSchedule(sId);
+		Schedule exist = dao.showWeek(sId,1);
 		Schedule Schedule = new Schedule (sId, name, author, sCode, rCode, days, this.currentTimeString(), timePeriod, startTime, endTime, startDate, endDate);
 		if (exist == null) {
 			return dao.addSchedule(Schedule);
