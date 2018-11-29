@@ -40,6 +40,9 @@ public class CreateScheduleHandler implements RequestStreamHandler{
 	String sId = this.genUUIDString();
 	String sCode = this.genUUIDString();
 	String rCode = this.genUUIDString();
+	ArrayList<String> dayID = new ArrayList<String>();
+	ArrayList<Timeslot> timeslots = new ArrayList<Timeslot>();
+	String ct;
 
 	/** Load from RDS, if it exists
 	 * 
@@ -51,6 +54,8 @@ public class CreateScheduleHandler implements RequestStreamHandler{
 		int numOfDays = this.daysBetweenDates(startDate, endDate);
 		int numOfMins = this.minutesBetweenTimes(startTime, endTime);
 		int numOfTs = numOfMins / timePeriod;
+		String curtime = this.currentTimeString();
+		ct = curtime;
 		ArrayList<Day> days = new ArrayList<Day>();
 		
 		// Create the list of days, also the sub-structures.
@@ -65,10 +70,12 @@ public class CreateScheduleHandler implements RequestStreamHandler{
 			}
 			Day day = new Day(dId,d,ts,sId);
 			days.add(day);
+			timeslots = ts;
+			dayID.add(dId);
 		}
 		
 		// check if present
-		Schedule Schedule = new Schedule (sId, name, author, sCode, rCode, days, this.currentTimeString(), timePeriod, startTime, endTime, startDate, endDate);
+		Schedule Schedule = new Schedule (sId, name, author, sCode, rCode, days,curtime, timePeriod, startTime, endTime, startDate, endDate);
 		return dao.addSchedule(Schedule);
 	}
 	
@@ -175,7 +182,7 @@ public class CreateScheduleHandler implements RequestStreamHandler{
 					resp = new CreateScheduleResponse("Unable to create Schedule: " + req.name, 405);
 				}
 			} catch (Exception e) {
-				resp = new CreateScheduleResponse("Unable to create Schedule: " + req.name + "(" + e.getMessage() + ")", 403);
+				resp = new CreateScheduleResponse("Unable to create Schedule: " + req.name + sId + timeslots + ct+ dayID + "(" + e.getMessage() + ")", 403);
 			}
 
 			// compute proper response
