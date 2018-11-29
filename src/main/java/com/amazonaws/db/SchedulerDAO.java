@@ -8,6 +8,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import com.amazonaws.model.Day;
 import com.amazonaws.model.Meeting;
@@ -51,9 +52,14 @@ public class SchedulerDAO {
 			}
 
 			int startWeekDay = LocalDate.parse(schedule.getStartDate()).getDayOfWeek().getValue();
+			LocalDate localWeekStart = LocalDate.parse(schedule.getStartDate())
+					.plusDays(1 + (7 - startWeekDay) + 7 * (week - 2));
+			LocalDate localWeekEnd = localWeekStart.plusDays(4);
 
 			resultSet.close();
 			ps.close();
+
+			schedule.setD(retrieveDAL(suuid, localWeekStart, localWeekEnd));
 
 			return schedule;
 
@@ -63,15 +69,50 @@ public class SchedulerDAO {
 		}
 	}
 
+	public boolean checkWeek(String suuid, int week) throws Exception {
+		if (week < 1) {
+			return false;
+		}
+		try {
+			Schedule schedule = new Schedule();
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Schedule WHERE scheduleUUID=?;");
+			ps.setString(1, suuid);
+			ResultSet resultSet = ps.executeQuery();
+			while (resultSet.next()) {
+				schedule.setId(suuid);
+				schedule.setStartDate(resultSet.getDate("startDate").toString());
+				schedule.setEndDate(resultSet.getDate("endDate").toString());
+			}
+
+			LocalDate scheduleEndDate = LocalDate.parse(schedule.getEndDate());
+			int startWeekDay = LocalDate.parse(schedule.getStartDate()).getDayOfWeek().getValue();
+			LocalDate calWeekStart = LocalDate.parse(schedule.getStartDate())
+					.plusDays(1 + (7 - startWeekDay) + 7 * (week - 2));
+
+			if (calWeekStart.compareTo(scheduleEndDate) > 0) {
+				return false;
+			}
+
+			return true;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Failed in getting schedule: " + e.getMessage());
+		}
+
+	}
+
 	// Retrieve an ArrayList<Day> for 5 Days.
-	public ArrayList<Day> retrieveDAL(String suuid, java.sql.Date startSQLdate) throws Exception {
+	public ArrayList<Day> retrieveDAL(String suuid, LocalDate startDate, LocalDate endDate) throws Exception {
 
 		try {
 			ArrayList<Day> dal = new ArrayList<Day>();
 
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT DISTINCT d.ScheduleUUID, dayUUID, date FROM Day d INNER JOIN Schedule s ON d.ScheduleUUID = s.ScheduleUUID WHERE d.scheduleUUID=? ORDER BY date;");
+					"SELECT DISTINCT d.ScheduleUUID, dayUUID, date FROM Day d INNER JOIN Schedule s ON d.ScheduleUUID = s.ScheduleUUID WHERE (d.scheduleUUID=?) AND (d.date>=?) AND (d.date<=?) ORDER BY date;");
 			ps.setString(1, suuid);
+			ps.setDate(2, java.sql.Date.valueOf(startDate));
+			ps.setDate(3, java.sql.Date.valueOf(endDate));
 			ResultSet resultSet = ps.executeQuery();
 
 			while (resultSet.next()) {
@@ -128,31 +169,26 @@ public class SchedulerDAO {
 		}
 
 	}
-	
+
 	public Meeting retrieveMeeting(String tuuid) throws Exception {
 		try {
 			Meeting m = new Meeting();
 
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT DISTINCT t.dayUUID, timeslotUUID, beginTime FROM Timeslot t INNER JOIN Day d ON t.dayUUID = d.dayUUID WHERE t.dayUUID=? ORDER BY beginTime;");
-			ps.setString(1, duuid);
+					"SELECT DISTINCT m.timeslotUUID, meetingUUID, partInfo, secretCode FROM Meeting m INNER JOIN Timeslot t ON m.timeslotUUID = t.timeslotUUID WHERE m.timeslotUUID=?;");
+			ps.setString(1, tuuid);
 			ResultSet resultSet = ps.executeQuery();
 
 			while (resultSet.next()) {
-				Timeslot tempT = new Timeslot();
-				tempT.setId(resultSet.getString("timeslotUUID"));
-				tempT.setBeginTime(resultSet.getTime("beginTime").toString().substring(0, 5));
-				tempT.setdId(duuid);
-				tal.add(tempT);
+				m.setId(resultSet.getString("meetingUUID"));
+				m.setPartInfo(resultSet.getString("partInfo"));
+				m.setSecretCode(resultSet.getString("secretCode"));
+				m.setId(tuuid);
 			}
 
 			resultSet.close();
 			ps.close();
-
-			for (Timeslot t : tal) {
-				t.setM(retrieveMeeting(t.getId()));
-			}
-			return tal;
+			return m;
 
 		} catch (Exception e) {
 			e.printStackTrace();
