@@ -15,6 +15,10 @@ import com.amazonaws.model.Meeting;
 import com.amazonaws.model.Schedule;
 import com.amazonaws.model.Timeslot;
 
+/**
+ * @author Ziqian Zeng
+ *
+ */
 public class SchedulerDAO {
 
 	java.sql.Connection conn;
@@ -30,6 +34,12 @@ public class SchedulerDAO {
 		}
 	}
 
+	/**
+	 * @param suuid
+	 * @param week
+	 * @return Schedule Object with ArrayList<Day> contains 5 Days
+	 * @throws Exception
+	 */
 	public Schedule showWeek(String suuid, int week) throws Exception {
 
 		try {
@@ -69,6 +79,12 @@ public class SchedulerDAO {
 		}
 	}
 
+	/**
+	 * @param suuid
+	 * @param week
+	 * @return boolean identifies if the week number is valid
+	 * @throws Exception
+	 */
 	public boolean checkWeek(String suuid, int week) throws Exception {
 		if (week < 1) {
 			return false;
@@ -103,6 +119,13 @@ public class SchedulerDAO {
 	}
 
 	// Retrieve an ArrayList<Day> for 5 Days.
+	/**
+	 * @param suuid
+	 * @param startDate
+	 * @param endDate
+	 * @return ArrayList<Day> contains 0-5 Days
+	 * @throws Exception
+	 */
 	public ArrayList<Day> retrieveDAL(String suuid, LocalDate startDate, LocalDate endDate) throws Exception {
 
 		try {
@@ -138,6 +161,11 @@ public class SchedulerDAO {
 
 	}
 
+	/**
+	 * @param duuid
+	 * @return ArrayList<Timeslot>
+	 * @throws Exception
+	 */
 	public ArrayList<Timeslot> retrieveTAL(String duuid) throws Exception {
 		try {
 			ArrayList<Timeslot> tal = new ArrayList<Timeslot>();
@@ -170,6 +198,11 @@ public class SchedulerDAO {
 
 	}
 
+	/**
+	 * @param tuuid
+	 * @return Meeting Object (null if no meeting retrieve
+	 * @throws Exception
+	 */
 	public Meeting retrieveMeeting(String tuuid) throws Exception {
 		try {
 			Meeting m = new Meeting();
@@ -207,6 +240,14 @@ public class SchedulerDAO {
 
 	// ---------------------ADD DATA TO DB---------------------------
 
+	/**
+	 * @param given
+	 * @return boolean indicates if Schedule successfully add into DB
+	 * 		FALSE Condition: conn Null
+	 * 						 Schedule is already present in DB
+	 * 						 Violation of DB rules
+	 * @throws Exception
+	 */
 	public boolean addSchedule(Schedule given) throws Exception {
 		if (conn == null) {
 			return false;
@@ -259,6 +300,12 @@ public class SchedulerDAO {
 		}
 	}
 
+	/**
+	 * @param scheduleUUID
+	 * @param dal
+	 * @return boolean indicates if Day successfully add into DB
+	 * @throws Exception
+	 */
 	public boolean addDayfromAL(String scheduleUUID, ArrayList<Day> dal) throws Exception {
 		try {
 			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Schedule");
@@ -281,6 +328,12 @@ public class SchedulerDAO {
 		}
 	}
 
+	/**
+	 * @param dayUUID
+	 * @param tal
+	 * @return boolean indicates if Timeslot successfully add into DB
+	 * @throws Exception
+	 */
 	public boolean addTimeslotfromAL(String dayUUID, ArrayList<Timeslot> tal) throws Exception {
 		try {
 			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Schedule");
@@ -305,6 +358,12 @@ public class SchedulerDAO {
 		}
 	}
 
+	/**
+	 * @param timeslotUUID
+	 * @param m
+	 * @return  boolean indicates if Meeting successfully add into DB
+	 * @throws Exception
+	 */
 	public boolean addMeeting(String timeslotUUID, Meeting m) throws Exception {
 		try {
 			PreparedStatement ps = conn.prepareStatement(
