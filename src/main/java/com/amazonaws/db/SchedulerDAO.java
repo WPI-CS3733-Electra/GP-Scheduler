@@ -267,8 +267,10 @@ public class SchedulerDAO {
 				ps.setTime(2, new Time(Time_formatter.parse(t.getBeginTime()).getTime()));
 				ps.setString(3, dayUUID);
 				ps.execute();
+				if (t.getM() != null) {
+					addMeeting(t.getId(), t.getM());
+				}
 
-				addMeeting(t.getId(), t.getM());
 			}
 			ps.close();
 			return true;
