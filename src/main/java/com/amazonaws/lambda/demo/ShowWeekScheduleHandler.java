@@ -90,13 +90,13 @@ public class ShowWeekScheduleHandler implements RequestStreamHandler{
 
 			ShowWeekScheduleResponse resp;
 			try {
-				if (validWeek(req.sId, req.week)) {
-					resp = new ShowWeekScheduleResponse("Successfully show the week:" + req.week, showSchedule(req.sId, req.week));
+				if (validWeek(req.id, req.week)) {
+					resp = new ShowWeekScheduleResponse("Successfully show the week:" + req.week, showSchedule(req.id, req.week));
 				} else {
 					resp = new ShowWeekScheduleResponse("Invalid Schedule ID or week number", 405);
 				}
 			} catch (Exception e) {
-				resp = new ShowWeekScheduleResponse("Unable to create Schedule: " + req.sId + "(" + e.getMessage() + ")", 403);
+				resp = new ShowWeekScheduleResponse("Unable to show Schedule: " + req.id + "(" + e.getMessage() + ")", 403);
 			}
 
 			// compute proper response

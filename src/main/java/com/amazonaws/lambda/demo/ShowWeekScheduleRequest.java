@@ -1,11 +1,11 @@
 package com.amazonaws.lambda.demo;
 
 public class ShowWeekScheduleRequest {
-	String sId;
+	String id;
 	int week;
 	
-	public ShowWeekScheduleRequest(String sId, int week) {
-		this.sId = sId;
+	public ShowWeekScheduleRequest(String id, int week) {
+		this.id = id;
 		this.week = week;
 	}
 	
