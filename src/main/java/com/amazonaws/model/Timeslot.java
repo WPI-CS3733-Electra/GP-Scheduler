@@ -9,12 +9,15 @@ public class Timeslot {
 	String beginTime;
 	String dId;
 	Meeting m;
-	 
+
 	public Timeslot(String id, String beginTime, String dId, Meeting m) {
 		this.id = id;
 		this.beginTime = beginTime;
 		this.dId = dId;
 		this.m = m;
+	}
+
+	public Timeslot() {
 	}
 
 	public String getId() {
@@ -48,5 +51,5 @@ public class Timeslot {
 	public void setM(Meeting m) {
 		this.m = m;
 	}
-	
+
 }

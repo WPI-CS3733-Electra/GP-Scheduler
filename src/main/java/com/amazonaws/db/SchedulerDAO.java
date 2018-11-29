@@ -62,8 +62,106 @@ public class SchedulerDAO {
 			throw new Exception("Failed in getting schedule: " + e.getMessage());
 		}
 	}
+
+	// Retrieve an ArrayList<Day> for 5 Days.
+	public ArrayList<Day> retrieveDAL(String suuid, java.sql.Date startSQLdate) throws Exception {
+
+		try {
+			ArrayList<Day> dal = new ArrayList<Day>();
+
+			PreparedStatement ps = conn.prepareStatement(
+					"SELECT DISTINCT d.ScheduleUUID, dayUUID, date FROM Day d INNER JOIN Schedule s ON d.ScheduleUUID = s.ScheduleUUID WHERE d.scheduleUUID=? ORDER BY date;");
+			ps.setString(1, suuid);
+			ResultSet resultSet = ps.executeQuery();
+
+			while (resultSet.next()) {
+				Day tempD = new Day();
+				tempD.setId(resultSet.getString("dayUUID"));
+				tempD.setDate(resultSet.getDate("date").toString());
+				tempD.setsId(suuid);
+				dal.add(tempD);
+			}
+
+			resultSet.close();
+			ps.close();
+
+			for (Day d : dal) {
+				d.setT(retrieveTAL(d.getId()));
+			}
+			return dal;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Failed in getting Day: " + e.getMessage());
+		}
+
+	}
+
+	public ArrayList<Timeslot> retrieveTAL(String duuid) throws Exception {
+		try {
+			ArrayList<Timeslot> tal = new ArrayList<Timeslot>();
+
+			PreparedStatement ps = conn.prepareStatement(
+					"SELECT DISTINCT t.dayUUID, timeslotUUID, beginTime FROM Timeslot t INNER JOIN Day d ON t.dayUUID = d.dayUUID WHERE t.dayUUID=? ORDER BY beginTime;");
+			ps.setString(1, duuid);
+			ResultSet resultSet = ps.executeQuery();
+
+			while (resultSet.next()) {
+				Timeslot tempT = new Timeslot();
+				tempT.setId(resultSet.getString("timeslotUUID"));
+				tempT.setBeginTime(resultSet.getTime("beginTime").toString().substring(0, 5));
+				tempT.setdId(duuid);
+				tal.add(tempT);
+			}
+
+			resultSet.close();
+			ps.close();
+
+			for (Timeslot t : tal) {
+				t.setM(retrieveMeeting(t.getId()));
+			}
+			return tal;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Failed in getting Timeslot: " + e.getMessage());
+		}
+
+	}
 	
-	//---------------------ADD DATA TO DB---------------------------
+	public Meeting retrieveMeeting(String tuuid) throws Exception {
+		try {
+			Meeting m = new Meeting();
+
+			PreparedStatement ps = conn.prepareStatement(
+					"SELECT DISTINCT t.dayUUID, timeslotUUID, beginTime FROM Timeslot t INNER JOIN Day d ON t.dayUUID = d.dayUUID WHERE t.dayUUID=? ORDER BY beginTime;");
+			ps.setString(1, duuid);
+			ResultSet resultSet = ps.executeQuery();
+
+			while (resultSet.next()) {
+				Timeslot tempT = new Timeslot();
+				tempT.setId(resultSet.getString("timeslotUUID"));
+				tempT.setBeginTime(resultSet.getTime("beginTime").toString().substring(0, 5));
+				tempT.setdId(duuid);
+				tal.add(tempT);
+			}
+
+			resultSet.close();
+			ps.close();
+
+			for (Timeslot t : tal) {
+				t.setM(retrieveMeeting(t.getId()));
+			}
+			return tal;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Failed in getting Timeslot: " + e.getMessage());
+		}
+
+	}
+
+	// ---------------------ADD DATA TO DB---------------------------
 
 	public boolean addSchedule(Schedule given) throws Exception {
 		try {
@@ -91,6 +189,7 @@ public class SchedulerDAO {
 			ps.setDate(10, java.sql.Date.valueOf(given.getStartDate()));
 			ps.setDate(11, java.sql.Date.valueOf(given.getEndDate()));
 			ps.execute();
+			ps.close();
 
 			addDayfromAL(given.getId(), given.getD());
 
@@ -114,7 +213,7 @@ public class SchedulerDAO {
 
 				addTimeslotfromAL(d.getId(), d.getT());
 			}
-
+			ps.close();
 			return true;
 
 		} catch (Exception e) {
@@ -135,7 +234,7 @@ public class SchedulerDAO {
 
 				addMeeting(t.getId(), t.getM());
 			}
-
+			ps.close();
 			return true;
 
 		} catch (Exception e) {
@@ -153,6 +252,7 @@ public class SchedulerDAO {
 			ps.setString(4, m.getSecretCode());
 			ps.execute();
 
+			ps.close();
 			return true;
 
 		} catch (Exception e) {

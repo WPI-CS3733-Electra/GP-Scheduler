@@ -5,12 +5,15 @@ public class Meeting {
 	String partInfo;
 	String tId;
 	String secretCode;
-	
-	public Meeting(String id, String partInfo, String tId, String secretCode ) {
+
+	public Meeting(String id, String partInfo, String tId, String secretCode) {
 		this.id = id;
 		this.partInfo = partInfo;
 		this.tId = tId;
 		this.secretCode = secretCode;
+	}
+
+	public Meeting() {
 	}
 
 	public String getId() {

@@ -16,8 +16,7 @@ public class Day {
 		this.sId = sId;
 	}
 	
-	public Day(String date) {
-		this.date = date;
+	public Day() {
 	}
 
 	public String getId() {
