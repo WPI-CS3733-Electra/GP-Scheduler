@@ -72,7 +72,7 @@ public class CreateScheduleHandler implements RequestStreamHandler{
 			ArrayList<Timeslot> ts = new ArrayList<Timeslot>();
 			for(int j = 0; j < numOfTs; j ++) {
 				String t = this.calBeginTime(startTime, timePeriod, j).toString();
-				Timeslot timeslot = new Timeslot(this.genUUIDString(),t,dId,null);
+				Timeslot timeslot = new Timeslot(this.genUUIDString(),t, null, dId);
 				ts.add(timeslot);
 			}
 			Day day = new Day(dId,d,ts,sId);

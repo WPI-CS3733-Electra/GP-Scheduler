@@ -5,7 +5,7 @@ import com.amazonaws.model.Schedule;
 public class ShowWeekScheduleResponse {
 	String response;
 	int httpCode;
-	Schedule sch;
+	Schedule schedule;
 	
 	public ShowWeekScheduleResponse (String s, int code) {
 		this.response = s;
@@ -13,9 +13,9 @@ public class ShowWeekScheduleResponse {
 	}
 	
 	// 200 means success
-	public ShowWeekScheduleResponse (String s, Schedule sch) {
+	public ShowWeekScheduleResponse (String s, Schedule schedule) {
 		this.response = s;
-		this.sch = sch;
+		this.schedule = schedule;
 		this.httpCode = 200;
 	}
 	
