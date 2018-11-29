@@ -173,6 +173,8 @@ public class SchedulerDAO {
 	public Meeting retrieveMeeting(String tuuid) throws Exception {
 		try {
 			Meeting m = new Meeting();
+			boolean hasMeeting = false;
+			
 
 			PreparedStatement ps = conn.prepareStatement(
 					"SELECT DISTINCT m.timeslotUUID, meetingUUID, partInfo, secretCode FROM Meeting m INNER JOIN Timeslot t ON m.timeslotUUID = t.timeslotUUID WHERE m.timeslotUUID=?;");
@@ -184,11 +186,17 @@ public class SchedulerDAO {
 				m.setPartInfo(resultSet.getString("partInfo"));
 				m.setSecretCode(resultSet.getString("secretCode"));
 				m.setId(tuuid);
+				hasMeeting = true;
 			}
 
 			resultSet.close();
 			ps.close();
-			return m;
+			
+			if(hasMeeting) {
+				return m;
+			}
+			
+			return null;
 
 		} catch (Exception e) {
 			e.printStackTrace();
