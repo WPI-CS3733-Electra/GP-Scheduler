@@ -162,12 +162,13 @@ public class SchedulerDAO {
 				int endDayofWeek = listEndDate.getDayOfWeek().getValue();
 
 				if (listStartDate.compareTo(startDate) > 0) {
-					for (int i = 1; i <= (5 - startDayofWeek); i++) {
+					for (int i = 1; i <= (startDayofWeek - 1); i++) {
 						Day tempD = new Day();
 						tempD.setDate(listStartDate.minusDays(i).toString());
 						dal.add(0, tempD);
 					}
-				} else if (listEndDate.compareTo(endDate) < 0) {
+				}
+				if (listEndDate.compareTo(endDate) < 0) {
 					for (int i = 1; i <= (5 - endDayofWeek); i++) {
 						Day tempD = new Day();
 						tempD.setDate(listEndDate.plusDays(i).toString());
