@@ -232,11 +232,11 @@ public class SchedulerDAO {
 			return true;
 
 		} catch (Exception e) {
-			throw new Exception("Failed to insert table Schedule: " + given.getId() + "\n" + given.getName() + "\n"
-					+ given.getAuthor() + "\n" + given.getSecretCode() + "\n" + given.getReleaseCode() + "\n"
-					+ given.getCreatedDate() + "\n" + given.getTimePeriod() + "\n" + given.getStartTime() + "\n"
-					+ given.getEndTime() + "\n" + given.getStartDate() + "\n" + given.getEndDate() + "\n" + given.getD()
-					+ "\n" + e.getMessage());
+			throw new Exception("Failed to insert table Schedule: " + given.getId() + "<>" + given.getName() + "<>"
+					+ given.getAuthor() + "<>" + given.getSecretCode() + "<>" + given.getReleaseCode() + "<>"
+					+ given.getCreatedDate() + "<>" + given.getTimePeriod() + "<>" + given.getStartTime() + "<>"
+					+ given.getEndTime() + "<>" + given.getStartDate() + "<>" + given.getEndDate() + "<>" + given.getD()
+					+ "<>" + e.getMessage());
 		}
 	}
 
