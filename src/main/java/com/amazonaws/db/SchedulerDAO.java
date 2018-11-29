@@ -53,6 +53,7 @@ public class SchedulerDAO {
 				schedule.setName(resultSet.getString("name"));
 				schedule.setAuthor(resultSet.getString("author"));
 				schedule.setSecretCode(resultSet.getString("secretCode"));
+				schedule.setReleaseCode(resultSet.getString("releaseCode"));
 				schedule.setCreatedDate(resultSet.getTimestamp("createdDate").toString().substring(0, 19));
 				schedule.setTimePeriod(resultSet.getInt("timePeriod"));
 				schedule.setStartTime(resultSet.getTime("startTime").toString().substring(0, 5));
@@ -69,7 +70,7 @@ public class SchedulerDAO {
 			resultSet.close();
 			ps.close();
 
-			schedule.setD(retrieveDAL(suuid, localWeekStart, localWeekEnd));
+			schedule.setD(retrieveDALBySchedule(suuid, localWeekStart, localWeekEnd));
 
 			return schedule;
 
@@ -123,10 +124,10 @@ public class SchedulerDAO {
 	 * @param suuid
 	 * @param startDate
 	 * @param endDate
-	 * @return ArrayList<Day> contains 0-5 Days
+	 * @return ArrayList<Day> contains 5 Days
 	 * @throws Exception
 	 */
-	public ArrayList<Day> retrieveDAL(String suuid, LocalDate startDate, LocalDate endDate) throws Exception {
+	public ArrayList<Day> retrieveDALBySchedule(String suuid, LocalDate startDate, LocalDate endDate) throws Exception {
 
 		try {
 			ArrayList<Day> dal = new ArrayList<Day>();
@@ -150,8 +151,30 @@ public class SchedulerDAO {
 			ps.close();
 
 			for (Day d : dal) {
-				d.setT(retrieveTAL(d.getId()));
+				d.setT(retrieveTALByDay(d.getId()));
 			}
+
+			int dalSize = dal.size();
+			if (dalSize != 5 && dalSize != 0) {
+				LocalDate listStartDate = LocalDate.parse(dal.get(0).getDate());
+				LocalDate listEndDate = LocalDate.parse(dal.get(dal.size() - 1).getDate());
+
+				if (listStartDate.compareTo(startDate) > 0) {
+					for (int i = 1; i <= (5 - dalSize); i++) {
+						Day tempD = new Day();
+						tempD.setDate(listStartDate.minusDays(i).toString());
+						dal.add(0, tempD);
+					}
+				} else if (listEndDate.compareTo(endDate) < 0) {
+					for (int i = 1; i <= (5 - dalSize); i++) {
+						Day tempD = new Day();
+						tempD.setDate(listEndDate.plusDays(i).toString());
+						dal.add(tempD);
+					}
+				}
+
+			}
+
 			return dal;
 
 		} catch (Exception e) {
@@ -166,7 +189,7 @@ public class SchedulerDAO {
 	 * @return ArrayList<Timeslot>
 	 * @throws Exception
 	 */
-	public ArrayList<Timeslot> retrieveTAL(String duuid) throws Exception {
+	public ArrayList<Timeslot> retrieveTALByDay(String duuid) throws Exception {
 		try {
 			ArrayList<Timeslot> tal = new ArrayList<Timeslot>();
 
@@ -187,7 +210,7 @@ public class SchedulerDAO {
 			ps.close();
 
 			for (Timeslot t : tal) {
-				t.setM(retrieveMeeting(t.getId()));
+				t.setM(retrieveMeetingByTimeslot(t.getId()));
 			}
 			return tal;
 
@@ -203,11 +226,10 @@ public class SchedulerDAO {
 	 * @return Meeting Object (null if no meeting retrieve
 	 * @throws Exception
 	 */
-	public Meeting retrieveMeeting(String tuuid) throws Exception {
+	public Meeting retrieveMeetingByTimeslot(String tuuid) throws Exception {
 		try {
 			Meeting m = new Meeting();
 			boolean hasMeeting = false;
-			
 
 			PreparedStatement ps = conn.prepareStatement(
 					"SELECT DISTINCT m.timeslotUUID, meetingUUID, partInfo, secretCode FROM Meeting m INNER JOIN Timeslot t ON m.timeslotUUID = t.timeslotUUID WHERE m.timeslotUUID=?;");
@@ -224,11 +246,11 @@ public class SchedulerDAO {
 
 			resultSet.close();
 			ps.close();
-			
-			if(hasMeeting) {
+
+			if (hasMeeting) {
 				return m;
 			}
-			
+
 			return null;
 
 		} catch (Exception e) {
@@ -242,10 +264,9 @@ public class SchedulerDAO {
 
 	/**
 	 * @param given
-	 * @return boolean indicates if Schedule successfully add into DB
-	 * 		FALSE Condition: conn Null
-	 * 						 Schedule is already present in DB
-	 * 						 Violation of DB rules
+	 * @return boolean indicates if Schedule successfully add into DB FALSE
+	 *         Condition: conn Null Schedule is already present in DB Violation of
+	 *         DB rules
 	 * @throws Exception
 	 */
 	public boolean addSchedule(Schedule given) throws Exception {
@@ -361,7 +382,7 @@ public class SchedulerDAO {
 	/**
 	 * @param timeslotUUID
 	 * @param m
-	 * @return  boolean indicates if Meeting successfully add into DB
+	 * @return boolean indicates if Meeting successfully add into DB
 	 * @throws Exception
 	 */
 	public boolean addMeeting(String timeslotUUID, Meeting m) throws Exception {
