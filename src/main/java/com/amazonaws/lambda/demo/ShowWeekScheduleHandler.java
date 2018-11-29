@@ -91,7 +91,7 @@ public class ShowWeekScheduleHandler implements RequestStreamHandler{
 			ShowWeekScheduleResponse resp;
 			try {
 				if (validWeek(req.sId, req.week)) {
-					resp = new ShowWeekScheduleResponse("Successfully defined constant:" + req.sId, showSchedule(req.sId, req.week));
+					resp = new ShowWeekScheduleResponse("Successfully show the week:" + req.week, showSchedule(req.sId, req.week));
 				} else {
 					resp = new ShowWeekScheduleResponse("Invalid Schedule ID or week number", 405);
 				}

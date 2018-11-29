@@ -37,12 +37,12 @@ import com.google.gson.Gson;
 
 public class CreateScheduleHandler implements RequestStreamHandler{
 	public LambdaLogger logger = null;
-	String sId = this.genUUIDString();
-	String sCode = this.genUUIDString();
-	String rCode = this.genUUIDString();
-	ArrayList<String> dayID = new ArrayList<String>();
-	ArrayList<Timeslot> timeslots = new ArrayList<Timeslot>();
-	String ct;
+	String sId;
+	String sCode;
+	String rCode;
+	//ArrayList<String> dayID = new ArrayList<String>();
+	//ArrayList<Timeslot> timeslots = new ArrayList<Timeslot>();
+	//String ct;
 
 	/** Load from RDS, if it exists
 	 * 
@@ -51,15 +51,22 @@ public class CreateScheduleHandler implements RequestStreamHandler{
 	boolean createSchedule(String name, String author, String startDate, String endDate, String startTime, String endTime, int timePeriod) throws Exception {
 		if (logger != null) { logger.log("in createSchedule"); }
 		SchedulerDAO dao = new SchedulerDAO();
+		String schId = this.genUUIDString();
+		String seCode = this.genUUIDString();
+		String reCode = this.genUUIDString();
+		sId = schId;
+		sCode = seCode;
+		rCode = reCode;
+		
 		int numOfDays = this.daysBetweenDates(startDate, endDate);
 		int numOfMins = this.minutesBetweenTimes(startTime, endTime);
 		int numOfTs = numOfMins / timePeriod;
 		String curtime = this.currentTimeString();
-		ct = curtime;
+		//ct = curtime;
 		ArrayList<Day> days = new ArrayList<Day>();
 		
 		// Create the list of days, also the sub-structures.
-		for(int i = 0; i < numOfDays; i++) {
+		for(int i = 0; i <= numOfDays; i++) {
 			String dId = this.genUUIDString();
 			String d = this.calDate(startDate, i).toString();
 			ArrayList<Timeslot> ts = new ArrayList<Timeslot>();
@@ -70,8 +77,8 @@ public class CreateScheduleHandler implements RequestStreamHandler{
 			}
 			Day day = new Day(dId,d,ts,sId);
 			days.add(day);
-			timeslots = ts;
-			dayID.add(dId);
+			//timeslots = ts;
+			//dayID.add(dId);
 		}
 		
 		// check if present
