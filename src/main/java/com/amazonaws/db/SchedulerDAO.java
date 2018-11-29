@@ -200,10 +200,10 @@ public class SchedulerDAO {
 	// ---------------------ADD DATA TO DB---------------------------
 
 	public boolean addSchedule(Schedule given) throws Exception {
-		if(conn == null) {
+		if (conn == null) {
 			return false;
 		}
-		
+
 		try {
 			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Schedule WHERE scheduleUUID=?;");
 			ps.setString(1, given.getId());
@@ -231,14 +231,14 @@ public class SchedulerDAO {
 			ps.execute();
 			ps.close();
 
-			// addDayfromAL(given.getId(), given.getD());
+			addDayfromAL(given.getId(), given.getD());
 
 			return true;
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new Exception("DBCONNECTED but Failed to insert table Schedule: " + e.getMessage());
-			
+
 			/*
 			 * throw new Exception("Failed to insert table Schedule: " + given.getId() +
 			 * "<>" + given.getName() + "<>" + given.getAuthor() + "<>" +
