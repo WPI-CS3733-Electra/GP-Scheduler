@@ -4,12 +4,11 @@ import java.util.ArrayList;
 
 public class Schedule {
 	String id;
-
 	String name;
 	String author;
 	String secretCode;
 	String releaseCode;
-	ArrayList<Day> d;
+	ArrayList<Day> days;
 	String createdDate;
 	int timePeriod;
 	String startTime;
@@ -19,15 +18,15 @@ public class Schedule {
 
 	public Schedule() {
 	}
-	
-	public Schedule(String id, String name, String author, String secretCode, String releaseCode, ArrayList<Day> d,
+
+	public Schedule(String id, String name, String author, String secretCode, String releaseCode, ArrayList<Day> days,
 			String createdDate, int timePeriod, String startTime, String endTime, String startDate, String endDate) {
 		this.id = id;
 		this.name = name;
 		this.author = author;
 		this.secretCode = secretCode;
 		this.releaseCode = releaseCode;
-		this.d = d;
+		this.days = days;
 		this.createdDate = createdDate;
 		this.timePeriod = timePeriod;
 		this.startTime = startTime;
@@ -76,12 +75,12 @@ public class Schedule {
 		this.releaseCode = releaseCode;
 	}
 
-	public ArrayList<Day> getD() {
-		return d;
+	public ArrayList<Day> getDays() {
+		return days;
 	}
 
-	public void setD(ArrayList<Day> d) {
-		this.d = d;
+	public void setDays(ArrayList<Day> days) {
+		this.days = days;
 	}
 
 	public String getCreatedDate() {
@@ -131,5 +130,6 @@ public class Schedule {
 	public void setEndDate(String endDate) {
 		this.endDate = endDate;
 	}
+	
 
 }

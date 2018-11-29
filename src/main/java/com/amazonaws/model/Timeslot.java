@@ -7,17 +7,17 @@ import org.joda.time.LocalTime;
 public class Timeslot {
 	String id;
 	String beginTime;
-	String dId;
-	Meeting m;
-
-	public Timeslot(String id, String beginTime, String dId, Meeting m) {
-		this.id = id;
-		this.beginTime = beginTime;
-		this.dId = dId;
-		this.m = m;
-	}
+	Meeting meeting;
+	String dayId;
 
 	public Timeslot() {
+	}
+
+	public Timeslot(String id, String beginTime, Meeting meeting, String dayId) {
+		this.id = id;
+		this.beginTime = beginTime;
+		this.meeting = meeting;
+		this.dayId = dayId;
 	}
 
 	public String getId() {
@@ -36,20 +36,22 @@ public class Timeslot {
 		this.beginTime = beginTime;
 	}
 
-	public String getdId() {
-		return dId;
+	public Meeting getMeeting() {
+		return meeting;
 	}
 
-	public void setdId(String dId) {
-		this.dId = dId;
+	public void setMeeting(Meeting meeting) {
+		this.meeting = meeting;
 	}
 
-	public Meeting getM() {
-		return m;
+	public String getDayId() {
+		return dayId;
 	}
 
-	public void setM(Meeting m) {
-		this.m = m;
+	public void setDayId(String dayId) {
+		this.dayId = dayId;
 	}
+	
+	
 
 }

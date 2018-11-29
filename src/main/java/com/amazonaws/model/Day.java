@@ -6,17 +6,17 @@ public class Day {
 
 	String id;
 	String date;
-	ArrayList<Timeslot> t;
-	String sId;
+	ArrayList<Timeslot> timeslots;
+	String scheduleId;
 
-	public Day(String id, String date, ArrayList<Timeslot> t, String sId) {
+	public Day() {
+	}
+
+	public Day(String id, String date, ArrayList<Timeslot> timeslots, String scheduleId) {
 		this.id = id;
 		this.date = date;
-		this.t = t;
-		this.sId = sId;
-	}
-	
-	public Day() {
+		this.timeslots = timeslots;
+		this.scheduleId = scheduleId;
 	}
 
 	public String getId() {
@@ -35,20 +35,20 @@ public class Day {
 		this.date = date;
 	}
 
-	public ArrayList<Timeslot> getT() {
-		return t;
+	public ArrayList<Timeslot> getTimeslots() {
+		return timeslots;
 	}
 
-	public void setT(ArrayList<Timeslot> t) {
-		this.t = t;
+	public void setTimeslots(ArrayList<Timeslot> timeslots) {
+		this.timeslots = timeslots;
 	}
 
-	public String getsId() {
-		return sId;
+	public String getScheduleId() {
+		return scheduleId;
 	}
 
-	public void setsId(String sId) {
-		this.sId = sId;
+	public void setScheduleId(String scheduleId) {
+		this.scheduleId = scheduleId;
 	}
 
 }

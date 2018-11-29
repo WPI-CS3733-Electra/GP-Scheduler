@@ -2,15 +2,15 @@ package com.amazonaws.model;
 
 public class Meeting {
 	String id;
-	String partInfo;
-	String tId;
 	String secretCode;
+	String partInfo;
+	String timeslotId;
 
-	public Meeting(String id, String partInfo, String tId, String secretCode) {
+	public Meeting(String id, String secretCode, String partInfo, String timeslotId) {
 		this.id = id;
-		this.partInfo = partInfo;
-		this.tId = tId;
 		this.secretCode = secretCode;
+		this.partInfo = partInfo;
+		this.timeslotId = timeslotId;
 	}
 
 	public Meeting() {
@@ -24,6 +24,14 @@ public class Meeting {
 		this.id = id;
 	}
 
+	public String getSecretCode() {
+		return secretCode;
+	}
+
+	public void setSecretCode(String secretCode) {
+		this.secretCode = secretCode;
+	}
+
 	public String getPartInfo() {
 		return partInfo;
 	}
@@ -32,20 +40,14 @@ public class Meeting {
 		this.partInfo = partInfo;
 	}
 
-	public String gettId() {
-		return tId;
+	public String getTimeslotId() {
+		return timeslotId;
 	}
 
-	public void settId(String tId) {
-		this.tId = tId;
+	public void setTimeslotId(String timeslotId) {
+		this.timeslotId = timeslotId;
 	}
-
-	public String getSecretCode() {
-		return secretCode;
-	}
-
-	public void setSecretCode(String secretCode) {
-		this.secretCode = secretCode;
-	}
+	
+	
 
 }

@@ -70,7 +70,7 @@ public class SchedulerDAO {
 			resultSet.close();
 			ps.close();
 
-			schedule.setD(retrieveDALBySchedule(suuid, localWeekStart, localWeekEnd));
+			schedule.setDays(retrieveDALBySchedule(suuid, localWeekStart, localWeekEnd));
 
 			return schedule;
 
@@ -143,7 +143,7 @@ public class SchedulerDAO {
 				Day tempD = new Day();
 				tempD.setId(resultSet.getString("dayUUID"));
 				tempD.setDate(resultSet.getDate("date").toString());
-				tempD.setsId(suuid);
+				tempD.setScheduleId(suuid);
 				dal.add(tempD);
 			}
 
@@ -151,7 +151,7 @@ public class SchedulerDAO {
 			ps.close();
 
 			for (Day d : dal) {
-				d.setT(retrieveTALByDay(d.getId()));
+				d.setTimeslots(retrieveTALByDay(d.getId()));
 			}
 
 			int dalSize = dal.size();
@@ -205,7 +205,7 @@ public class SchedulerDAO {
 				Timeslot tempT = new Timeslot();
 				tempT.setId(resultSet.getString("timeslotUUID"));
 				tempT.setBeginTime(resultSet.getTime("beginTime").toString().substring(0, 5));
-				tempT.setdId(duuid);
+				tempT.setDayId(duuid);
 				tal.add(tempT);
 			}
 
@@ -213,7 +213,7 @@ public class SchedulerDAO {
 			ps.close();
 
 			for (Timeslot t : tal) {
-				t.setM(retrieveMeetingByTimeslot(t.getId()));
+				t.setMeeting(retrieveMeetingByTimeslot(t.getId()));
 			}
 			return tal;
 
@@ -304,7 +304,7 @@ public class SchedulerDAO {
 			ps.execute();
 			ps.close();
 
-			addDayfromAL(given.getId(), given.getD());
+			addDayfromAL(given.getId(), given.getDays());
 
 			return true;
 
@@ -341,7 +341,7 @@ public class SchedulerDAO {
 				ps.setString(3, scheduleUUID);
 				ps.execute();
 
-				addTimeslotfromAL(d.getId(), d.getT());
+				addTimeslotfromAL(d.getId(), d.getTimeslots());
 			}
 			ps.close();
 			return true;
@@ -368,8 +368,8 @@ public class SchedulerDAO {
 				ps.setTime(2, new Time(Time_formatter.parse(t.getBeginTime()).getTime()));
 				ps.setString(3, dayUUID);
 				ps.execute();
-				if (t.getM() != null) {
-					addMeeting(t.getId(), t.getM());
+				if (t.getMeeting() != null) {
+					addMeeting(t.getId(), t.getMeeting());
 				}
 
 			}
