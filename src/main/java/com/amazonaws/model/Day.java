@@ -15,6 +15,10 @@ public class Day {
 		this.t = t;
 		this.sId = sId;
 	}
+	
+	public Day(String date) {
+		this.date = date;
+	}
 
 	public String getId() {
 		return id;

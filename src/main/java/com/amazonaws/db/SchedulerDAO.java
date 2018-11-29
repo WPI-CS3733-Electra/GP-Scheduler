@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.amazonaws.model.Day;
+import com.amazonaws.model.Meeting;
 import com.amazonaws.model.Schedule;
 import com.amazonaws.model.Timeslot;
 
@@ -48,9 +49,9 @@ public class SchedulerDAO {
 				schedule.setStartDate(resultSet.getDate("startDate").toString());
 				schedule.setEndDate(resultSet.getDate("endDate").toString());
 			}
-			
+
 			int startWeekDay = LocalDate.parse(schedule.getStartDate()).getDayOfWeek().getValue();
-					
+
 			resultSet.close();
 			ps.close();
 
@@ -61,6 +62,8 @@ public class SchedulerDAO {
 			throw new Exception("Failed in getting schedule: " + e.getMessage());
 		}
 	}
+	
+	//---------------------ADD DATA TO DB---------------------------
 
 	public boolean addSchedule(Schedule given) throws Exception {
 		try {
@@ -88,55 +91,72 @@ public class SchedulerDAO {
 			ps.setDate(10, java.sql.Date.valueOf(given.getStartDate()));
 			ps.setDate(11, java.sql.Date.valueOf(given.getEndDate()));
 			ps.execute();
-			
+
 			addDayfromAL(given.getId(), given.getD());
-			
+
 			return true;
 
 		} catch (Exception e) {
 			throw new Exception("Failed to insert table Schedule: " + e.getMessage());
 		}
 	}
-	
+
 	public boolean addDayfromAL(String scheduleUUID, ArrayList<Day> dal) throws Exception {
 		try {
 			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Schedule");
 
-			for(Day d: dal) {
+			for (Day d : dal) {
 				ps = conn.prepareStatement("INSERT INTO Day(dayUUID,date,scheduleUUID) values(?,?,?);");
 				ps.setString(1, d.getId());
-				ps.setString(2, d.getDate());
+				ps.setDate(2, java.sql.Date.valueOf(d.getDate()));
 				ps.setString(3, scheduleUUID);
 				ps.execute();
-				
+
 				addTimeslotfromAL(d.getId(), d.getT());
 			}
-			
+
 			return true;
 
 		} catch (Exception e) {
 			throw new Exception("Failed to insert table Day: " + e.getMessage());
 		}
 	}
-	
+
 	public boolean addTimeslotfromAL(String dayUUID, ArrayList<Timeslot> tal) throws Exception {
 		try {
 			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Schedule");
 
-			for(Timeslot t: tal) {
+			for (Timeslot t : tal) {
 				ps = conn.prepareStatement("INSERT INTO Timeslot(timeslotUUID,beginTime,dayUUID) values(?,?,?);");
 				ps.setString(1, t.getId());
-				ps.setString(2, d.getDate());
-				ps.setString(3, scheduleUUID);
+				ps.setTime(2, new Time(Time_formatter.parse(t.getBeginTime()).getTime()));
+				ps.setString(3, dayUUID);
 				ps.execute();
-				
-				addTimeslotfromAL();
+
+				addMeeting(t.getId(), t.getM());
 			}
-			
+
 			return true;
 
 		} catch (Exception e) {
 			throw new Exception("Failed to insert table Timeslot: " + e.getMessage());
+		}
+	}
+
+	public boolean addMeeting(String timeslotUUID, Meeting m) throws Exception {
+		try {
+			PreparedStatement ps = conn.prepareStatement(
+					"INSERT INTO Meeting(meetingUUID,partInfo,timeslotUUID,secretCode) values(?,?,?,?);");
+			ps.setString(1, m.getId());
+			ps.setString(2, m.getPartInfo());
+			ps.setString(3, timeslotUUID);
+			ps.setString(4, m.getSecretCode());
+			ps.execute();
+
+			return true;
+
+		} catch (Exception e) {
+			throw new Exception("Failed to insert table Meeting: " + e.getMessage());
 		}
 	}
 
