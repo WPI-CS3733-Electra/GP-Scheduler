@@ -227,11 +227,12 @@ public class SchedulerDAO {
 			ps.execute();
 			ps.close();
 
-			addDayfromAL(given.getId(), given.getD());
+			//addDayfromAL(given.getId(), given.getD());
 
 			return true;
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new Exception("Failed to insert table Schedule: " + given.getId() + "<>" + given.getName() + "<>"
 					+ given.getAuthor() + "<>" + given.getSecretCode() + "<>" + given.getReleaseCode() + "<>"
 					+ given.getCreatedDate() + "<>" + given.getTimePeriod() + "<>" + given.getStartTime() + "<>"
@@ -257,6 +258,7 @@ public class SchedulerDAO {
 			return true;
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new Exception("Failed to insert table Day: " + e.getMessage());
 		}
 	}
@@ -280,6 +282,7 @@ public class SchedulerDAO {
 			return true;
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new Exception("Failed to insert table Timeslot: " + e.getMessage());
 		}
 	}
@@ -298,6 +301,7 @@ public class SchedulerDAO {
 			return true;
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new Exception("Failed to insert table Meeting: " + e.getMessage());
 		}
 	}
