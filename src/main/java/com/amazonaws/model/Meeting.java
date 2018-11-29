@@ -13,4 +13,36 @@ public class Meeting {
 		this.secretCode = secretCode;
 	}
 
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getPartInfo() {
+		return partInfo;
+	}
+
+	public void setPartInfo(String partInfo) {
+		this.partInfo = partInfo;
+	}
+
+	public String gettId() {
+		return tId;
+	}
+
+	public void settId(String tId) {
+		this.tId = tId;
+	}
+
+	public String getSecretCode() {
+		return secretCode;
+	}
+
+	public void setSecretCode(String secretCode) {
+		this.secretCode = secretCode;
+	}
+
 }
