@@ -20,6 +20,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import com.amazonaws.db.MeetingDAO;
 import com.amazonaws.db.SchedulerDAO;
 import com.amazonaws.model.Day;
 import com.amazonaws.model.Meeting;
@@ -45,7 +46,7 @@ public class CreateMeetingHandler implements RequestStreamHandler{
 	 */
 	boolean createMeeting(String partInfo, String timeslotId) throws Exception {
 		if (logger != null) { logger.log("in createSchedule"); }
-		SchedulerDAO dao = new SchedulerDAO();
+		MeetingDAO dao = new MeetingDAO();
 		String meetingId = this.genUUIDString();
 		String seCode = this.genUUIDString();
 		mId = meetingId;
