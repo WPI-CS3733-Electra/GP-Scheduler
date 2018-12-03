@@ -72,4 +72,70 @@ public class MeetingDAO {
 		}
 	}
 
+	public boolean deleteMeeting(String muuid) throws Exception {
+
+		if (conn == null) {
+			return false;
+		}
+
+		try {
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Meeting WHERE meetingUUID=?;");
+			ps.setString(1, muuid);
+			ResultSet resultSet = ps.executeQuery();
+
+			// not present?
+			if (!resultSet.next()) {
+				resultSet.close();
+				return false;
+			}
+			
+			resultSet.close();
+
+			ps = conn.prepareStatement("DELETE FROM Meeting WHERE meetingUUID=?;");
+			ps.setString(1, muuid);
+			ps.execute();
+
+			ps.close();
+			return true;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Failed to DELETE Meeting(Org): " + e.getMessage());
+		}
+	}
+	
+	public boolean deleteMeeting(String muuid, String mSecretCode) throws Exception {
+
+		if (conn == null) {
+			return false;
+		}
+
+		try {
+			String dbSecretCode = "a";
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Meeting WHERE meetingUUID=?;");
+			ps.setString(1, muuid);
+			ResultSet resultSet = ps.executeQuery();
+
+			// not present?
+			while (resultSet.next()) {
+				dbSecretCode = resultSet.getString("secretCode");
+			}
+			resultSet.close();
+			
+			if(!mSecretCode.equals(dbSecretCode)) {
+				return false;
+			}
+			
+			ps = conn.prepareStatement("DELETE FROM Meeting WHERE meetingUUID=?;");
+			ps.setString(1, muuid);
+			ps.execute();
+			ps.close();
+			return true;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Failed to DELETE Meeting(Par): " + e.getMessage());
+		}
+	}
+
 }
