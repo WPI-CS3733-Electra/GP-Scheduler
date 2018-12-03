@@ -8,7 +8,7 @@ public class OrganizerCancelMeetingRequest {
 	}
 	
 	public String toString() {
-		return "Delete Schedule by id: "+ id;
+		return "Cancel Meeting by id: "+ id;
 	}
 	
 	

@@ -11,23 +11,23 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.amazonaws.db.MeetingDAO;
+import com.amazonaws.db.SchedulerDAO;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.google.gson.Gson;
 
-public class OrganizerCancelMeetingHandler implements RequestStreamHandler{
+public class DeleteScheduleHandler implements RequestStreamHandler{
 	public LambdaLogger logger = null;
 
 	/** Load from RDS, if it exists
 	 * 
 	 * @throws Exception 
 	 */
-	boolean cancelMeetingOrg(String id) throws Exception {
-		if (logger != null) { logger.log("Organizer Cancel Meeting by Meeting id: " + id); }
-		MeetingDAO dao = new MeetingDAO();
-		return dao.deleteMeeting(id);
+	boolean deleteSchedule(String id) throws Exception {
+		if (logger != null) { logger.log("Delete Schedule by ID: " + id); }
+		SchedulerDAO dao = new SchedulerDAO();
+		return dao.deleteSchedule(id);
 	}
 	
 	
@@ -77,18 +77,18 @@ public class OrganizerCancelMeetingHandler implements RequestStreamHandler{
 		}
 
 		if (!processed) {
-			OrganizerCancelMeetingRequest req = new Gson().fromJson(body, OrganizerCancelMeetingRequest.class);
+			DeleteScheduleRequest req = new Gson().fromJson(body, DeleteScheduleRequest.class);
 			logger.log(req.toString());
 
-			OrganizerCancelMeetingResponse resp;
+			DeleteScheduleResponse resp;
 			try {
-				if (cancelMeetingOrg(req.id)) {
-					resp = new OrganizerCancelMeetingResponse("Successfully Cancel Meeting by Id: " + req.id);
+				if (deleteSchedule(req.id)) {
+					resp = new DeleteScheduleResponse("Successfully Delete Schedule by Id: " + req.id);
 				} else {
-					resp = new OrganizerCancelMeetingResponse("Meeting does not exist", 405);
+					resp = new DeleteScheduleResponse("Schedule does not exist", 405);
 				}
 			} catch (Exception e) {
-				resp = new OrganizerCancelMeetingResponse("Unable to Cancel Meeting by Id: " + req.id + "(" + e.getMessage() + ")", 403);
+				resp = new DeleteScheduleResponse("Unable to Delete Schedule by Id: " + req.id + "(" + e.getMessage() + ")", 403);
 			}
 
 			// compute proper response

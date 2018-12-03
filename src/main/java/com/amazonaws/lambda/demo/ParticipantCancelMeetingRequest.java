@@ -12,6 +12,6 @@ public class ParticipantCancelMeetingRequest {
 
 
 	public String toString() {
-		return "Delete Schedule by id: "+ id + "with SecretCode: " + secretCode;
+		return "Cancel Meeting by id: "+ id + "with SecretCode: " + secretCode;
 	}
 }

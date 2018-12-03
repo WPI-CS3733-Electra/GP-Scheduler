@@ -25,7 +25,7 @@ public class ParticipantCancelMeetingHandler implements RequestStreamHandler {
 	 * @throws Exception 
 	 */
 	boolean cancelMeetingPar(String id, String secretCode) throws Exception {
-		if (logger != null) { logger.log("Organizer Delete Schedule by Schedule id: " + id); }
+		if (logger != null) { logger.log("Organizer Cancel Meeting by Meeting id: " + id); }
 		MeetingDAO dao = new MeetingDAO();
 		return dao.deleteMeeting(id, secretCode);
 	}
@@ -83,12 +83,12 @@ public class ParticipantCancelMeetingHandler implements RequestStreamHandler {
 			ParticipantCancelMeetingResponse resp;
 			try {
 				if (cancelMeetingPar(req.id, req.secretCode)) {
-					resp = new ParticipantCancelMeetingResponse("Successfully Delete Schedule by Id: " + req.id);
+					resp = new ParticipantCancelMeetingResponse("Successfully Cancel Meeting by Id: " + req.id);
 				} else {
-					resp = new ParticipantCancelMeetingResponse("releaseCode does not exist", 405);
+					resp = new ParticipantCancelMeetingResponse("Meeting does not exist", 405);
 				}
 			} catch (Exception e) {
-				resp = new ParticipantCancelMeetingResponse("Unable to Delete Schedule by Id: " + req.id + "(" + e.getMessage() + ")", 403);
+				resp = new ParticipantCancelMeetingResponse("Unable to Cancel Meeting by Id: " + req.id + "(" + e.getMessage() + ")", 403);
 			}
 
 			// compute proper response
