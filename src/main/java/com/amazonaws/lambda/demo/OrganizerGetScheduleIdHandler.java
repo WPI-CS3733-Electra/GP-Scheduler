@@ -27,7 +27,7 @@ public class OrganizerGetScheduleIdHandler implements RequestStreamHandler{
 		return dao.checkBySCode(secretCode);
 	}
 	
-	String GetScheduleIdOrg(String secretCode) throws Exception {
+	String getScheduleIdOrg(String secretCode) throws Exception {
 		if (logger != null) { logger.log("get Schedule by secretCode:" + secretCode); }
 		SchedulerDAO dao = new SchedulerDAO();
 		return dao.GetScheduleIdOrg(secretCode);
@@ -85,7 +85,7 @@ public class OrganizerGetScheduleIdHandler implements RequestStreamHandler{
 			OrganizerGetScheduleIdResponse resp;
 			try {
 				if (checkBySCode(req.secretCode)) {
-					resp = new OrganizerGetScheduleIdResponse("Successfully get the Schedule Id by secretCode:" + req.secretCode, GetScheduleIdOrg(req.secretCode));
+					resp = new OrganizerGetScheduleIdResponse("Successfully get the Schedule Id by secretCode:" + req.secretCode, getScheduleIdOrg(req.secretCode));
 				} else {
 					resp = new OrganizerGetScheduleIdResponse("secretCode does not exist", 405);
 				}

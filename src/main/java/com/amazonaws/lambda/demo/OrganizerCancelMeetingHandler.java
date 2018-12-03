@@ -11,31 +11,26 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.amazonaws.db.MeetingDAO;
 import com.amazonaws.db.SchedulerDAO;
-import com.amazonaws.model.Schedule;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.google.gson.Gson;
 
-public class ParticipantGetScheduleIdHandler implements RequestStreamHandler {
+public class OrganizerCancelMeetingHandler implements RequestStreamHandler{
 	public LambdaLogger logger = null;
 
 	/** Load from RDS, if it exists
 	 * 
 	 * @throws Exception 
 	 */
-	boolean checkByRCode(String releaseCode) throws Exception {
-		if (logger != null) { logger.log("check the existence of Schedule by releaseCode: " + releaseCode); }
-		SchedulerDAO dao = new SchedulerDAO();
-		return dao.checkByRCode(releaseCode);
+	boolean cancelMeetingOrg(String id) throws Exception {
+		if (logger != null) { logger.log("Organizer Delete Schedule by Schedule id: " + id); }
+		MeetingDAO dao = new MeetingDAO();
+		return dao.deleteMeeting(id);
 	}
 	
-	String getScheduleIdPar(String releaseCode) throws Exception {
-		if (logger != null) { logger.log("get Schedule by releaseCode: " + releaseCode); }
-		SchedulerDAO dao = new SchedulerDAO();
-		return dao.GetScheduleIdPar(releaseCode);
-	}
 	
 	@Override
 	public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
@@ -83,18 +78,18 @@ public class ParticipantGetScheduleIdHandler implements RequestStreamHandler {
 		}
 
 		if (!processed) {
-			ParticipantGetScheduleIdRequest req = new Gson().fromJson(body, ParticipantGetScheduleIdRequest.class);
+			OrganizerCancelMeetingRequest req = new Gson().fromJson(body, OrganizerCancelMeetingRequest.class);
 			logger.log(req.toString());
 
-			ParticipantGetScheduleIdResponse resp;
+			OrganizerCancelMeetingResponse resp;
 			try {
-				if (checkByRCode(req.releaseCode)) {
-					resp = new ParticipantGetScheduleIdResponse("Successfully get the Schedule Id by releaseCode:" + req.releaseCode, getScheduleIdPar(req.releaseCode));
+				if (cancelMeetingOrg(req.id)) {
+					resp = new OrganizerCancelMeetingResponse("Successfully Delete Schedule by Id: " + req.id);
 				} else {
-					resp = new ParticipantGetScheduleIdResponse("releaseCode does not exist", 405);
+					resp = new OrganizerCancelMeetingResponse("releaseCode does not exist", 405);
 				}
 			} catch (Exception e) {
-				resp = new ParticipantGetScheduleIdResponse("Unable to get Schedule ID by releaseCode: " + req.releaseCode + "(" + e.getMessage() + ")", 403);
+				resp = new OrganizerCancelMeetingResponse("Unable to Delete Schedule by Id: " + req.id + "(" + e.getMessage() + ")", 403);
 			}
 
 			// compute proper response
