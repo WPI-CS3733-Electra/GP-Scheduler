@@ -17,17 +17,17 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.google.gson.Gson;
 
-public class OrganizerCancelMeetingHandler implements RequestStreamHandler{
+public class ParticipantCancelMeetingHandler implements RequestStreamHandler {
 	public LambdaLogger logger = null;
 
 	/** Load from RDS, if it exists
 	 * 
 	 * @throws Exception 
 	 */
-	boolean cancelMeetingOrg(String id) throws Exception {
+	boolean cancelMeetingPar(String id, String secretCode) throws Exception {
 		if (logger != null) { logger.log("Organizer Delete Schedule by Schedule id: " + id); }
 		MeetingDAO dao = new MeetingDAO();
-		return dao.deleteMeeting(id);
+		return dao.deleteMeeting(id, secretCode);
 	}
 	
 	
@@ -77,18 +77,18 @@ public class OrganizerCancelMeetingHandler implements RequestStreamHandler{
 		}
 
 		if (!processed) {
-			OrganizerCancelMeetingRequest req = new Gson().fromJson(body, OrganizerCancelMeetingRequest.class);
+			ParticipantCancelMeetingRequest req = new Gson().fromJson(body, ParticipantCancelMeetingRequest.class);
 			logger.log(req.toString());
 
-			OrganizerCancelMeetingResponse resp;
+			ParticipantCancelMeetingResponse resp;
 			try {
-				if (cancelMeetingOrg(req.id)) {
-					resp = new OrganizerCancelMeetingResponse("Successfully Delete Schedule by Id: " + req.id);
+				if (cancelMeetingPar(req.id, req.secretCode)) {
+					resp = new ParticipantCancelMeetingResponse("Successfully Delete Schedule by Id: " + req.id);
 				} else {
-					resp = new OrganizerCancelMeetingResponse("releaseCode does not exist", 405);
+					resp = new ParticipantCancelMeetingResponse("releaseCode does not exist", 405);
 				}
 			} catch (Exception e) {
-				resp = new OrganizerCancelMeetingResponse("Unable to Delete Schedule by Id: " + req.id + "(" + e.getMessage() + ")", 403);
+				resp = new ParticipantCancelMeetingResponse("Unable to Delete Schedule by Id: " + req.id + "(" + e.getMessage() + ")", 403);
 			}
 
 			// compute proper response
@@ -101,4 +101,8 @@ public class OrganizerCancelMeetingHandler implements RequestStreamHandler{
         writer.write(responseJson.toJSONString());  
         writer.close();
 	}
+	
+
+	
+	
 }
