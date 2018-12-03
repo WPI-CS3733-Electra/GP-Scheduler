@@ -407,4 +407,102 @@ public class SchedulerDAO {
 		}
 	}
 
+	public boolean checkBySCode(String secretCode) throws Exception {
+
+		try {
+
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Schedule WHERE secretCode=?;");
+			ps.setString(1, secretCode);
+			ResultSet resultSet = ps.executeQuery();
+			while (resultSet.next()) {
+				resultSet.close();
+				ps.close();
+				return true;
+			}
+
+			resultSet.close();
+			ps.close();
+			return false;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Failed checking table Schedule by Secret Code: " + e.getMessage());
+		}
+
+	}
+
+	public boolean checkByRCode(String releaseCode) throws Exception {
+
+		try {
+
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Schedule WHERE releaseCode=?;");
+			ps.setString(1, releaseCode);
+			ResultSet resultSet = ps.executeQuery();
+			while (resultSet.next()) {
+				resultSet.close();
+				ps.close();
+				return true;
+			}
+			
+			resultSet.close();
+			ps.close();
+			return false;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Failed checking table Schedule by Release Code: " + e.getMessage());
+		}
+
+	}
+
+	public String GetScheduleIdOrg(String secretCode) throws Exception {
+		try {
+
+			String result_suuid = "";
+			
+			PreparedStatement ps = conn.prepareStatement("SELECT DISTINCT scheduleUUID FROM Schedule WHERE secretCode=?;");
+			ps.setString(1, secretCode);
+			ResultSet resultSet = ps.executeQuery();
+
+			while (resultSet.next()) {
+				result_suuid = resultSet.getString("scheduleUUID");
+			}
+
+			resultSet.close();
+			ps.close();
+
+			return result_suuid;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Failed in getting Schedule UUID by secretCode: " + e.getMessage());
+		}
+
+	}
+	
+	public String GetScheduleIdPar(String releaseCode) throws Exception {
+		try {
+
+			String result_suuid = "";
+			
+			PreparedStatement ps = conn.prepareStatement("SELECT DISTINCT scheduleUUID FROM Schedule WHERE releaseCode=?;");
+			ps.setString(1, releaseCode);
+			ResultSet resultSet = ps.executeQuery();
+
+			while (resultSet.next()) {
+				result_suuid = resultSet.getString("scheduleUUID");
+			}
+
+			resultSet.close();
+			ps.close();
+
+			return result_suuid;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Failed in getting Schedule UUID by releaseCode: " + e.getMessage());
+		}
+
+	}
+
 }
