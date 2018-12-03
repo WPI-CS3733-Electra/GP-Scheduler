@@ -403,10 +403,11 @@ public class SchedulerDAO {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new Exception("Failed to insert table Meeting: " + e.getMessage());
+			throw new Exception("Failed to insert table Meeting(with timeslotUUID): " + e.getMessage());
 		}
 	}
 
+	// ---------------------Liter 2---------------------------
 	public boolean checkBySCode(String secretCode) throws Exception {
 
 		try {
@@ -443,7 +444,7 @@ public class SchedulerDAO {
 				ps.close();
 				return true;
 			}
-			
+
 			resultSet.close();
 			ps.close();
 			return false;
@@ -459,8 +460,9 @@ public class SchedulerDAO {
 		try {
 
 			String result_suuid = "";
-			
-			PreparedStatement ps = conn.prepareStatement("SELECT DISTINCT scheduleUUID FROM Schedule WHERE secretCode=?;");
+
+			PreparedStatement ps = conn
+					.prepareStatement("SELECT DISTINCT scheduleUUID FROM Schedule WHERE secretCode=?;");
 			ps.setString(1, secretCode);
 			ResultSet resultSet = ps.executeQuery();
 
@@ -479,13 +481,14 @@ public class SchedulerDAO {
 		}
 
 	}
-	
+
 	public String GetScheduleIdPar(String releaseCode) throws Exception {
 		try {
 
 			String result_suuid = "";
-			
-			PreparedStatement ps = conn.prepareStatement("SELECT DISTINCT scheduleUUID FROM Schedule WHERE releaseCode=?;");
+
+			PreparedStatement ps = conn
+					.prepareStatement("SELECT DISTINCT scheduleUUID FROM Schedule WHERE releaseCode=?;");
 			ps.setString(1, releaseCode);
 			ResultSet resultSet = ps.executeQuery();
 
