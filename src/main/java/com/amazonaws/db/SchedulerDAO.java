@@ -52,7 +52,7 @@ public class SchedulerDAO {
 				schedule.setId(resultSet.getString("scheduleUUID"));
 				schedule.setName(resultSet.getString("name"));
 				schedule.setAuthor(resultSet.getString("author"));
-				schedule.setSecretCode(resultSet.getString("secretCode"));
+				// schedule.setSecretCode(resultSet.getString("secretCode"));
 				schedule.setReleaseCode(resultSet.getString("releaseCode"));
 				schedule.setCreatedDate(resultSet.getTimestamp("createdDate").toString().substring(0, 19));
 				schedule.setTimePeriod(resultSet.getInt("timePeriod"));
@@ -242,8 +242,8 @@ public class SchedulerDAO {
 			while (resultSet.next()) {
 				m.setId(resultSet.getString("meetingUUID"));
 				m.setPartInfo(resultSet.getString("partInfo"));
-				m.setSecretCode(resultSet.getString("secretCode"));
-				m.setId(tuuid);
+				// m.setSecretCode(resultSet.getString("secretCode"));
+				m.setTimeslotId(tuuid);
 				hasMeeting = true;
 			}
 
@@ -506,6 +506,38 @@ public class SchedulerDAO {
 			throw new Exception("Failed in getting Schedule UUID by releaseCode: " + e.getMessage());
 		}
 
+	}
+
+	public boolean deleteSchedule(String suuid) throws Exception {
+
+		if (conn == null) {
+			return false;
+		}
+
+		try {
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Schedule WHERE scheduleUUID=?;");
+			ps.setString(1, suuid);
+			ResultSet resultSet = ps.executeQuery();
+
+			// not present?
+			if (!resultSet.next()) {
+				resultSet.close();
+				return false;
+			}
+
+			resultSet.close();
+
+			ps = conn.prepareStatement("DELETE FROM Schedule WHERE scheduleUUID=?;");
+			ps.setString(1, suuid);
+			ps.execute();
+
+			ps.close();
+			return true;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Failed to DELETE Schedule: " + e.getMessage());
+		}
 	}
 
 }
