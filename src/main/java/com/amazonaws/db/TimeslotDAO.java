@@ -117,7 +117,7 @@ public class TimeslotDAO {
 		}
 	}
 
-	public boolean openDay(ArrayList<Timeslot> tal) throws Exception {
+	public boolean openTimeslotByDay(ArrayList<Timeslot> tal) throws Exception {
 		try {
 			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Schedule");
 
@@ -135,6 +135,96 @@ public class TimeslotDAO {
 			e.printStackTrace();
 			throw new Exception("Failed to open a DAY of Timeslot: " + e.getMessage());
 		}
+	}
+
+	public boolean deleteTimeslotByDay(String duuid) throws Exception {
+
+		if (conn == null) {
+			return false;
+		}
+
+		try {
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Timeslot WHERE dayUUID=?;");
+			ps.setString(1, duuid);
+			ResultSet resultSet = ps.executeQuery();
+
+			// not present?
+			if (!resultSet.next()) {
+				resultSet.close();
+				return false;
+			}
+
+			resultSet.close();
+
+			ps = conn.prepareStatement("DELETE FROM Timeslot WHERE dayUUID=?;");
+			ps.setString(1, duuid);
+			ps.execute();
+
+			ps.close();
+			return true;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Failed to DELETE Timeslot By Day: " + e.getMessage());
+		}
+	}
+
+	public ArrayList<Day> getScheduleDayInfo(String suuid) throws Exception {
+
+		try {
+			ArrayList<Day> dal = new ArrayList<Day>();
+
+			PreparedStatement ps = conn.prepareStatement(
+					"SELECT DISTINCT d.ScheduleUUID, dayUUID, date FROM Day d INNER JOIN Schedule s ON d.ScheduleUUID = s.ScheduleUUID WHERE d.scheduleUUID=? ORDER BY date;");
+			ps.setString(1, suuid);
+			ResultSet resultSet = ps.executeQuery();
+
+			while (resultSet.next()) {
+				Day tempD = new Day();
+				tempD.setId(resultSet.getString("dayUUID"));
+				tempD.setDate(resultSet.getDate("date").toString());
+				tempD.setScheduleId(suuid);
+				dal.add(tempD);
+			}
+
+			resultSet.close();
+			ps.close();
+
+			for (Day d : dal) {
+				d.setTimeslots(retrieveTALByDay(d.getId()));
+			}
+
+			int dalSize = dal.size();
+			if (dalSize != 5 && dalSize != 0) {
+				LocalDate listStartDate = LocalDate.parse(dal.get(0).getDate());
+				int startDayofWeek = listStartDate.getDayOfWeek().getValue();
+				LocalDate listEndDate = LocalDate.parse(dal.get(dal.size() - 1).getDate());
+				int endDayofWeek = listEndDate.getDayOfWeek().getValue();
+
+				if (listStartDate.compareTo(startDate) > 0) {
+					for (int i = 1; i <= (startDayofWeek - 1); i++) {
+						Day tempD = new Day();
+						tempD.setDate(listStartDate.minusDays(i).toString());
+						dal.add(0, tempD);
+					}
+				}
+				if (listEndDate.compareTo(endDate) < 0) {
+					for (int i = 1; i <= (5 - endDayofWeek); i++) {
+						Day tempD = new Day();
+						tempD.setDate(listEndDate.plusDays(i).toString());
+						dal.add(tempD);
+					}
+				}
+
+			}
+
+			return dal;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Failed in getting Day: " + e.getMessage());
+		}
+
 	}
 
 }
