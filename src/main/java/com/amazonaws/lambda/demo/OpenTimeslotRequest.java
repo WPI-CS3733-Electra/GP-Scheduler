@@ -10,6 +10,6 @@ public class OpenTimeslotRequest {
 	}
 	
 	public String toString() {
-		return "Create Meeting by" + dayId + "at" + beginTime;
+		return "Open Timeslot by" + dayId + "at" + beginTime;
 	}
 }
