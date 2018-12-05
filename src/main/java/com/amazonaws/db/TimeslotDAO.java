@@ -155,7 +155,7 @@ public class TimeslotDAO {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new Exception("Failed to open a DAY of Timeslot: " + e.getMessage());
+			throw new Exception("Failed to OPEN Timeslots: " + e.getMessage());
 		}
 	}
 
@@ -197,7 +197,7 @@ public class TimeslotDAO {
 			ArrayList<Day> dal = new ArrayList<Day>();
 
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT DISTINCT d.ScheduleUUID, dayUUID, date FROM Day d INNER JOIN Schedule s ON d.ScheduleUUID = s.ScheduleUUID WHERE d.scheduleUUID=? ORDER BY date;");
+					"SELECT * FROM Day WHERE scheduleUUID=? ORDER BY date;");
 			ps.setString(1, suuid);
 			ResultSet resultSet = ps.executeQuery();
 
