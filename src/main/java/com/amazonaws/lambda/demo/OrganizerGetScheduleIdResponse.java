@@ -3,17 +3,17 @@ package com.amazonaws.lambda.demo;
 public class OrganizerGetScheduleIdResponse {
 
 	String response;
-	int httpCode;
+	int httpcode;
 	String scheduleId;
 	
 	public OrganizerGetScheduleIdResponse (String s, int code) {
 		this.response = s;
-		this.httpCode = code;
+		this.httpcode = code;
 	}
 	
 	public OrganizerGetScheduleIdResponse (String s, String scheduleId) {
 		this.response = s;
-		this.httpCode = 200;
+		this.httpcode = 200;
 		this.scheduleId = scheduleId;
 	}
 	

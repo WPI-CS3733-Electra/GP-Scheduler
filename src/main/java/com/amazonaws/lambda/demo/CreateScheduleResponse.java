@@ -2,14 +2,14 @@ package com.amazonaws.lambda.demo;
 
 public class CreateScheduleResponse {
 	String response;
-	int httpCode;
+	int httpcode;
 	String secretCode;
 	String releaseCode;
 	String scheduleId;
 	
 	public CreateScheduleResponse (String s, int code) {
 		this.response = s;
-		this.httpCode = code;
+		this.httpcode = code;
 	}
 	
 	// 200 means success
@@ -18,7 +18,7 @@ public class CreateScheduleResponse {
 		this.secretCode = sc;
 		this.releaseCode = rc;
 		this.scheduleId = id;
-		this.httpCode = 200;
+		this.httpcode = 200;
 	}
 	
 	public String toString() {

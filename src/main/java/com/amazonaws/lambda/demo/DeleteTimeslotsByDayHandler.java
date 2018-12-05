@@ -11,24 +11,24 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.amazonaws.db.MeetingDAO;
+import com.amazonaws.db.SchedulerDAO;
 import com.amazonaws.db.TimeslotDAO;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.google.gson.Gson;
 
-public class DeleteTimeslotHandler implements RequestStreamHandler {
+public class DeleteTimeslotsByDayHandler implements RequestStreamHandler{
 	public LambdaLogger logger = null;
 
 	/** Load from RDS, if it exists
 	 * 
 	 * @throws Exception 
 	 */
-	boolean deleteTimeslot(String id) throws Exception  {
-		if (logger != null) { logger.log("Close Timeslot by id: " + id); }
+	boolean deleteTimeslotsByDay(String dayId) throws Exception {
+		if (logger != null) { logger.log("Delete Timeslots by Day ID: " + dayId); }
 		TimeslotDAO dao = new TimeslotDAO();
-		return dao.deleteTimeslot(id);
+		return dao.deleteTimeslotByDay(dayId);
 	}
 	
 	
@@ -39,7 +39,7 @@ public class DeleteTimeslotHandler implements RequestStreamHandler {
 
 		JSONObject headerJson = new JSONObject();
 		headerJson.put("Content-Type",  "application/json");  // not sure if needed anymore?
-		headerJson.put("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+		headerJson.put("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
 	    headerJson.put("Access-Control-Allow-Origin",  "*");
 	        
 		JSONObject responseJson = new JSONObject();
@@ -78,18 +78,18 @@ public class DeleteTimeslotHandler implements RequestStreamHandler {
 		}
 
 		if (!processed) {
-			DeleteTimeslotRequest req = new Gson().fromJson(body, DeleteTimeslotRequest.class);
+			DeleteTimeslotsByDayRequest req = new Gson().fromJson(body, DeleteTimeslotsByDayRequest.class);
 			logger.log(req.toString());
 
-			DeleteTimeslotResponse resp;
+			DeleteTimeslotsByDayResponse resp;
 			try {
-				if (deleteTimeslot(req.id)) {
-					resp = new DeleteTimeslotResponse("Successfully Close Timeslot by Id: " + req.id);
+				if (deleteTimeslotsByDay(req.dayId)) {
+					resp = new DeleteTimeslotsByDayResponse("Successfully Delete Timeslots by Day ID: " + req.dayId);
 				} else {
-					resp = new DeleteTimeslotResponse("Timeslot does not exist", 405);
+					resp = new DeleteTimeslotsByDayResponse("Day ID does not exist", 405);
 				}
 			} catch (Exception e) {
-				resp = new DeleteTimeslotResponse("Unable to Close Timeslot by Id: " + req.id + "(" + e.getMessage() + ")", 403);
+				resp = new DeleteTimeslotsByDayResponse("Unable to Delete Timeslots by Day ID: " + req.dayId + "(" + e.getMessage() + ")", 403);
 			}
 
 			// compute proper response

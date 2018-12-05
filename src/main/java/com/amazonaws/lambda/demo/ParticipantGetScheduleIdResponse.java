@@ -2,17 +2,17 @@ package com.amazonaws.lambda.demo;
 
 public class ParticipantGetScheduleIdResponse {
 	String response;
-	int httpCode;
+	int httpcode;
 	String scheduleId;
 	
 	public ParticipantGetScheduleIdResponse (String s, int code) {
 		this.response = s;
-		this.httpCode = code;
+		this.httpcode = code;
 	}
 	
 	public ParticipantGetScheduleIdResponse (String s, String scheduleId) {
 		this.response = s;
-		this.httpCode = 200;
+		this.httpcode = 200;
 		this.scheduleId = scheduleId;
 	}
 	
