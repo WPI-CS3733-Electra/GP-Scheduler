@@ -6,49 +6,31 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.UUID;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.amazonaws.db.MeetingDAO;
 import com.amazonaws.db.TimeslotDAO;
-import com.amazonaws.model.Meeting;
-import com.amazonaws.model.Timeslot;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.google.gson.Gson;
 
-public class OpenTimeslotHandler implements RequestStreamHandler{
+public class DeleteTimeslotHandler implements RequestStreamHandler {
 	public LambdaLogger logger = null;
-	String tId;
-
-
-	//ArrayList<String> dayID = new ArrayList<String>();
-	//ArrayList<Timeslot> timeslots = new ArrayList<Timeslot>();
-	//String ct;
 
 	/** Load from RDS, if it exists
 	 * 
 	 * @throws Exception 
 	 */
-	boolean createTimeslot(String dayId, String beginTime) throws Exception {
-		if (logger != null) { logger.log("in createTimeslot"); }
+	boolean DeleteTimeslot(String id) throws Exception  {
+		if (logger != null) { logger.log("Close Timeslot by id: " + id); }
 		TimeslotDAO dao = new TimeslotDAO();
-		String timeslotId = this.genUUIDString();
-		tId = timeslotId;
-		
-		// need to check if the timeslot is existed or occupied
-		Timeslot timeslot = new Timeslot (tId, beginTime, null, dayId);
-		return dao.openTimeslot(timeslot);
+		return dao.deleteTimeslot(id);
 	}
 	
-	String genUUIDString() {
-		UUID u = UUID.randomUUID();
-		String s = u.toString();
-		return s;
-	}
 	
 	@Override
 	public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
@@ -63,7 +45,7 @@ public class OpenTimeslotHandler implements RequestStreamHandler{
 		JSONObject responseJson = new JSONObject();
 		responseJson.put("headers", headerJson);
 
-		CreateScheduleResponse response = null;
+		ShowWeekScheduleResponse response = null;
 		
 		// extract body from incoming HTTP POST request. If any error, then return 422 error
 		String body;
@@ -77,7 +59,7 @@ public class OpenTimeslotHandler implements RequestStreamHandler{
 			String method = (String) event.get("httpMethod");
 			if (method != null && method.equalsIgnoreCase("OPTIONS")) {
 				logger.log("Options request");
-				response = new CreateScheduleResponse("name", 200);  // OPTIONS needs a 200 response
+				response = new ShowWeekScheduleResponse("name", 200);  // OPTIONS needs a 200 response
 		        responseJson.put("body", new Gson().toJson(response));
 		        processed = true;
 		        body = null;
@@ -87,27 +69,27 @@ public class OpenTimeslotHandler implements RequestStreamHandler{
 					body = event.toJSONString();  // this is only here to make testing easier
 				}
 			}
-		} catch (org.json.simple.parser.ParseException pe) {
+		} catch (ParseException pe) {
 			logger.log(pe.toString());
-			response = new CreateScheduleResponse("Bad Request:" + pe.getMessage(), 422);  // unable to process input
+			response = new ShowWeekScheduleResponse("Bad Request:" + pe.getMessage(), 404);  // unable to process input
 	        responseJson.put("body", new Gson().toJson(response));
 	        processed = true;
 	        body = null;
 		}
 
 		if (!processed) {
-			OpenTimeslotRequest req = new Gson().fromJson(body, OpenTimeslotRequest.class);
+			DeleteTimeslotRequest req = new Gson().fromJson(body, DeleteTimeslotRequest.class);
 			logger.log(req.toString());
 
-			OpenTimeslotResponse resp;
+			DeleteTimeslotResponse resp;
 			try {
-				if (createTimeslot(req.dayId, req.beginTime)) {
-					resp = new OpenTimeslotResponse("Successfully Open Timeslot at:"+ req.beginTime);
+				if (DeleteTimeslot(req.id)) {
+					resp = new DeleteTimeslotResponse("Successfully Close Timeslot by Id: " + req.id);
 				} else {
-					resp = new OpenTimeslotResponse("Timeslot already exist: ", 405);
+					resp = new DeleteTimeslotResponse("Timeslot does not exist", 405);
 				}
 			} catch (Exception e) {
-				resp = new OpenTimeslotResponse("Unable to open Timeslot:" + "(" + e.getMessage() + ")", 403);
+				resp = new DeleteTimeslotResponse("Unable to Close Timeslot by Id: " + req.id + "(" + e.getMessage() + ")", 403);
 			}
 
 			// compute proper response
