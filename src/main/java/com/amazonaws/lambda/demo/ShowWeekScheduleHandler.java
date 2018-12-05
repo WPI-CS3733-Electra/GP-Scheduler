@@ -6,14 +6,21 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.joda.time.LocalTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.amazonaws.db.SchedulerDAO;
 import com.amazonaws.model.Schedule;
+import com.amazonaws.model.Timeslot;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
@@ -36,7 +43,46 @@ public class ShowWeekScheduleHandler implements RequestStreamHandler{
 	Schedule showSchedule(String sId, int week) throws Exception {
 		if (logger != null) { logger.log("get Schedule in week" + week); }
 		SchedulerDAO dao = new SchedulerDAO();
-		return dao.showWeek(sId, week);
+		Schedule origin = dao.showWeek(sId, week);
+		String startTime = origin.getStartTime();
+		String endTime = origin.getEndTime();
+		int timePeriod = origin.getTimePeriod();
+		int numOfMins = this.minutesBetweenTimes(startTime, endTime);
+		int numOfTs = numOfMins / timePeriod;
+		
+		for (int i = 0; i < origin.getDays().size(); i++) {
+			ArrayList<Timeslot> tslist = origin.getDays().get(i).getTimeslots();
+			
+			for(int j = 0; j < numOfTs; j ++) {
+				LocalTime beginTime = calBeginTime(startTime, timePeriod, j);
+				if(stringToTime(tslist.get(j).getBeginTime()).equals(beginTime)) {}
+				else {
+					tslist.add(j, null);
+				}
+			}
+			
+		}
+		
+		return origin;
+	}
+	
+	int minutesBetweenTimes(String s1, String s2) throws java.text.ParseException {
+		SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+		Date date1 = format.parse(s1);
+		Date date2 = format.parse(s2);
+		long difference = (date2.getTime() - date1.getTime())/60000;
+		return (int)difference;
+	}
+	
+	LocalTime calBeginTime(String startTime, int timePeriod, int index) throws ParseException {
+        LocalTime time = this.stringToTime(startTime);
+        time = time.plusMinutes(index * timePeriod);
+        return time;	
+	}
+	
+	LocalTime stringToTime(String s) throws ParseException {
+		DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm");
+		return formatter.parseLocalTime(s);
 	}
 	
 	@Override
