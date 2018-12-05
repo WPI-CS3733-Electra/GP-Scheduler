@@ -6,30 +6,48 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.UUID;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
-import com.amazonaws.db.SchedulerDAO;
+import com.amazonaws.db.MeetingDAO;
+import com.amazonaws.model.Meeting;
+import com.amazonaws.model.Timeslot;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.google.gson.Gson;
 
-public class DeleteScheduleHandler implements RequestStreamHandler{
+public class OpenTimeslotHandler implements RequestStreamHandler{
 	public LambdaLogger logger = null;
+	String tId;
+
+
+	//ArrayList<String> dayID = new ArrayList<String>();
+	//ArrayList<Timeslot> timeslots = new ArrayList<Timeslot>();
+	//String ct;
 
 	/** Load from RDS, if it exists
 	 * 
 	 * @throws Exception 
 	 */
-	boolean deleteSchedule(String id) throws Exception {
-		if (logger != null) { logger.log("Delete Schedule by ID: " + id); }
-		SchedulerDAO dao = new SchedulerDAO();
-		return dao.deleteSchedule(id);
+	boolean createTimeslot(String dayId, String beginTime) throws Exception {
+		if (logger != null) { logger.log("in createTimeslot"); }
+		TimeslotDAO dao = new TimeslotDAO();
+		String timeslotId = this.genUUIDString();
+		tId = timeslotId;
+		
+		// need to check if the timeslot is existed or occupied
+		Timeslot timeslot = new Timeslot (tId, beginTime, null, dayId);
+		return dao.addMeeting(timeslot);
 	}
 	
+	String genUUIDString() {
+		UUID u = UUID.randomUUID();
+		String s = u.toString();
+		return s;
+	}
 	
 	@Override
 	public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
@@ -38,13 +56,13 @@ public class DeleteScheduleHandler implements RequestStreamHandler{
 
 		JSONObject headerJson = new JSONObject();
 		headerJson.put("Content-Type",  "application/json");  // not sure if needed anymore?
-		headerJson.put("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
+		headerJson.put("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
 	    headerJson.put("Access-Control-Allow-Origin",  "*");
 	        
 		JSONObject responseJson = new JSONObject();
 		responseJson.put("headers", headerJson);
 
-		ShowWeekScheduleResponse response = null;
+		CreateScheduleResponse response = null;
 		
 		// extract body from incoming HTTP POST request. If any error, then return 422 error
 		String body;
@@ -58,7 +76,7 @@ public class DeleteScheduleHandler implements RequestStreamHandler{
 			String method = (String) event.get("httpMethod");
 			if (method != null && method.equalsIgnoreCase("OPTIONS")) {
 				logger.log("Options request");
-				response = new ShowWeekScheduleResponse("name", 200);  // OPTIONS needs a 200 response
+				response = new CreateScheduleResponse("name", 200);  // OPTIONS needs a 200 response
 		        responseJson.put("body", new Gson().toJson(response));
 		        processed = true;
 		        body = null;
@@ -68,27 +86,26 @@ public class DeleteScheduleHandler implements RequestStreamHandler{
 					body = event.toJSONString();  // this is only here to make testing easier
 				}
 			}
-		} catch (ParseException pe) {
+		} catch (org.json.simple.parser.ParseException pe) {
 			logger.log(pe.toString());
-			response = new ShowWeekScheduleResponse("Bad Request:" + pe.getMessage(), 404);  // unable to process input
+			response = new CreateScheduleResponse("Bad Request:" + pe.getMessage(), 422);  // unable to process input
 	        responseJson.put("body", new Gson().toJson(response));
 	        processed = true;
 	        body = null;
 		}
 
 		if (!processed) {
-			DeleteScheduleRequest req = new Gson().fromJson(body, DeleteScheduleRequest.class);
+			OpenTimeslotRequest req = new Gson().fromJson(body, OpenTimeslotRequest.class);
 			logger.log(req.toString());
 
-			DeleteScheduleResponse resp;
+			OpenTimeslotResponse resp;
 			try {
-				if (deleteSchedule(req.id)) {
-					resp = new DeleteScheduleResponse("Successfully Delete Schedule by Id: " + req.id);
+				if (createTimeslot(req.dayId, req.beginTime)) {
+					resp = new OpenTimeslotResponse("Successfully Open Timeslot at:"+ req.beginTime);
 				} else {
-					resp = new DeleteScheduleResponse("Schedule does not exist", 405);
 				}
 			} catch (Exception e) {
-				resp = new DeleteScheduleResponse("Unable to Delete Schedule by Id: " + req.id + "(" + e.getMessage() + ")", 403);
+				resp = new OpenTimeslotResponse("Unable to open Timeslot:" + "(" + e.getMessage() + ")", 403);
 			}
 
 			// compute proper response
