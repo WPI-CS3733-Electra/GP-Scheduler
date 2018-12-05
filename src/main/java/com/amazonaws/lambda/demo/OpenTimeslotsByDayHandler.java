@@ -40,9 +40,9 @@ public class OpenTimeslotsByDayHandler implements RequestStreamHandler {
 	 * @throws Exception 
 	 */
 	
-	Schedule getScheduleInfo(String scheduleId) throws Exception {
+	Schedule getScheduleInfo(String scheduleId, String dayId) throws Exception {
 		TimeslotDAO dao = new TimeslotDAO();
-		return dao.getScheduleTimeInfo(scheduleId);
+		return dao.getScheduleTimeInfo(scheduleId, dayId);
 		
 	}
 	boolean openTimeslotsByDay(String dayId, String scheduleId) throws Exception {
@@ -50,19 +50,26 @@ public class OpenTimeslotsByDayHandler implements RequestStreamHandler {
 		
 		TimeslotDAO dao = new TimeslotDAO();
 		
-		String startTime = getScheduleInfo(scheduleId).getStartTime();
-		String endTime = getScheduleInfo(scheduleId).getEndTime();
-		int timePeriod = getScheduleInfo(scheduleId).getTimePeriod();
+		String startTime = getScheduleInfo(scheduleId, dayId).getStartTime();
+		String endTime = getScheduleInfo(scheduleId, dayId).getEndTime();
+		ArrayList<Timeslot> list = getScheduleInfo(scheduleId, dayId).getDays().get(0).getTimeslots();
+		int timePeriod = getScheduleInfo(scheduleId, dayId).getTimePeriod();
 		int numOfMins = this.minutesBetweenTimes(startTime, endTime);
 		int numOfTs = numOfMins / timePeriod;
 		
 		ArrayList<Timeslot> tslist = new ArrayList<Timeslot>();
-		
+
+	
 		for(int i = 0; i < numOfTs; i++ ) {
-			String tsId = this.genUUIDString();
-			String beginTime = calBeginTime(startTime,timePeriod,i).toString();
-			Timeslot ts = new Timeslot(tsId,beginTime,null,dayId);
-			tslist.add(ts);
+			LocalTime beginTime = calBeginTime(startTime,timePeriod,i);
+			if(beginTime.equals(stringToTime(list.get(i).getBeginTime()))){}
+			else {
+				String tsId = this.genUUIDString();
+				Timeslot ts = new Timeslot(tsId,beginTime.toString(),null,dayId);
+				tslist.add(ts);
+				list.add(i, ts);
+			}
+			
 		}
 		
 		return dao.openTimeslots(tslist);
