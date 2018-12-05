@@ -191,7 +191,7 @@ public class TimeslotDAO {
 		}
 	}
 
-	public ArrayList<Day> getScheduleDayInfo(String suuid) throws Exception {
+	public ArrayList<Day> getScheduleDayInfo(String suuid, String beginTime) throws Exception {
 
 		try {
 			ArrayList<Day> dal = new ArrayList<Day>();
@@ -206,6 +206,10 @@ public class TimeslotDAO {
 				tempD.setId(resultSet.getString("dayUUID"));
 				dal.add(tempD);
 			}
+			
+			for (Day d : dal) {
+				d.setTimeslots(retrieveTALByDay(d.getId(), beginTime));
+			}
 
 			resultSet.close();
 			ps.close();
@@ -215,6 +219,34 @@ public class TimeslotDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new Exception("Failed in getting ScheduleDayInfo: " + e.getMessage());
+		}
+
+	}
+	
+	public ArrayList<Timeslot> retrieveTALByDay(String duuid, String beginTime) throws Exception {
+		try {
+			ArrayList<Timeslot> tal = new ArrayList<Timeslot>();
+
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Timeslot WHERE (dayUUID=?) AND (beginTime=?);");
+			ps.setString(1, duuid);
+			ps.setTime(2, new Time(Time_formatter.parse(beginTime).getTime()));
+			ResultSet resultSet = ps.executeQuery();
+
+			while (resultSet.next()) {
+				Timeslot tempT = new Timeslot();
+				tempT.setId(resultSet.getString("timeslotUUID"));
+				tempT.setBeginTime(resultSet.getTime("beginTime").toString().substring(0, 5));
+				tal.add(tempT);
+			}
+
+			resultSet.close();
+			ps.close();
+			
+			return tal;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Failed in getting Timeslot(getScheduleDayInfo): " + e.getMessage());
 		}
 
 	}
