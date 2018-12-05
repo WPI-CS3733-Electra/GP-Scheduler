@@ -117,7 +117,7 @@ public class TimeslotDAO {
 		}
 	}
 
-	public boolean openTimeslotByDay(ArrayList<Timeslot> tal) throws Exception {
+	public boolean openTimeslots(ArrayList<Timeslot> tal) throws Exception {
 		try {
 			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Schedule");
 
@@ -182,49 +182,53 @@ public class TimeslotDAO {
 			while (resultSet.next()) {
 				Day tempD = new Day();
 				tempD.setId(resultSet.getString("dayUUID"));
-				tempD.setDate(resultSet.getDate("date").toString());
-				tempD.setScheduleId(suuid);
 				dal.add(tempD);
 			}
 
 			resultSet.close();
 			ps.close();
 
-			for (Day d : dal) {
-				d.setTimeslots(retrieveTALByDay(d.getId()));
-			}
-
-			int dalSize = dal.size();
-			if (dalSize != 5 && dalSize != 0) {
-				LocalDate listStartDate = LocalDate.parse(dal.get(0).getDate());
-				int startDayofWeek = listStartDate.getDayOfWeek().getValue();
-				LocalDate listEndDate = LocalDate.parse(dal.get(dal.size() - 1).getDate());
-				int endDayofWeek = listEndDate.getDayOfWeek().getValue();
-
-				if (listStartDate.compareTo(startDate) > 0) {
-					for (int i = 1; i <= (startDayofWeek - 1); i++) {
-						Day tempD = new Day();
-						tempD.setDate(listStartDate.minusDays(i).toString());
-						dal.add(0, tempD);
-					}
-				}
-				if (listEndDate.compareTo(endDate) < 0) {
-					for (int i = 1; i <= (5 - endDayofWeek); i++) {
-						Day tempD = new Day();
-						tempD.setDate(listEndDate.plusDays(i).toString());
-						dal.add(tempD);
-					}
-				}
-
-			}
-
 			return dal;
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new Exception("Failed in getting Day: " + e.getMessage());
+			throw new Exception("Failed in getting ScheduleDayInfo: " + e.getMessage());
 		}
 
+	}
+
+	public boolean deleteTimeslotByTime(String suuid, String beginTime) throws Exception {
+
+		if (conn == null) {
+			return false;
+		}
+
+		try {
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Schedule WHERE scheduleUUID=?;");
+			ps.setString(1, suuid);
+			ResultSet resultSet = ps.executeQuery();
+
+			// not present?
+			if (!resultSet.next()) {
+				resultSet.close();
+				return false;
+			}
+
+			resultSet.close();
+
+			ps = conn.prepareStatement(
+					"DELETE t FROM Timeslot t INNER JOIN Day d ON t.dayUUID = d.dayUUID INNER JOIN Schedule s ON d.scheduleUUID = s.scheduleUUID WHERE (s.scheduleUUID=?) AND (t.beginTime=?);");
+			ps.setString(1, suuid);
+			ps.setTime(2, new Time(Time_formatter.parse(beginTime).getTime()));
+			ps.execute();
+
+			ps.close();
+			return true;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Failed to DELETE Timeslot By Time: " + e.getMessage());
+		}
 	}
 
 }
