@@ -43,25 +43,14 @@ public class TimeslotDAO {
 
 		try {
 
-			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Timeslot WHERE timeslotUUID=?;");
-			ps.setString(1, t.getId());
-			ResultSet resultSet = ps.executeQuery();
-
-			// already present?
-			while (resultSet.next()) {
-				ps.close();
-				resultSet.close();
-				return false;
-			}
-
-			ps = conn.prepareStatement("INSERT INTO Timeslot(timeslotUUID,beginTime,dayUUID) values(?,?,?);");
+			PreparedStatement ps = conn
+					.prepareStatement("INSERT INTO Timeslot(timeslotUUID,beginTime,dayUUID) values(?,?,?);");
 			ps.setString(1, t.getId());
 			ps.setTime(2, new Time(Time_formatter.parse(t.getBeginTime()).getTime()));
 			ps.setString(3, t.getDayId());
 			ps.execute();
 
 			ps.close();
-			resultSet.close();
 			return true;
 
 		} catch (Exception e) {
@@ -86,7 +75,7 @@ public class TimeslotDAO {
 				resultSet.close();
 				return false;
 			}
-			
+
 			resultSet.close();
 
 			ps = conn.prepareStatement("DELETE FROM Timeslot WHERE timeslotUUID=?;");
@@ -101,39 +90,50 @@ public class TimeslotDAO {
 			throw new Exception("Failed to DELETE 1 Timeslot: " + e.getMessage());
 		}
 	}
-	
-	public boolean openTimeslot(Timeslot t) throws Exception {
 
-		if (conn == null) {
-			return false;
-		}
+	public Schedule getScheduleTimeInfo(String suuid) throws Exception {
 
 		try {
-
-			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Timeslot WHERE timeslotUUID=?;");
-			ps.setString(1, t.getId());
+			Schedule schedule = new Schedule();
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Schedule WHERE scheduleUUID=?;");
+			ps.setString(1, suuid);
 			ResultSet resultSet = ps.executeQuery();
 
-			// already present?
 			while (resultSet.next()) {
-				ps.close();
-				resultSet.close();
-				return false;
+				schedule.setId(resultSet.getString("scheduleUUID"));
+				schedule.setTimePeriod(resultSet.getInt("timePeriod"));
+				schedule.setStartTime(resultSet.getTime("startTime").toString().substring(0, 5));
+				schedule.setEndTime(resultSet.getTime("endTime").toString().substring(0, 5));
 			}
 
-			ps = conn.prepareStatement("INSERT INTO Timeslot(timeslotUUID,beginTime,dayUUID) values(?,?,?);");
-			ps.setString(1, t.getId());
-			ps.setTime(2, new Time(Time_formatter.parse(t.getBeginTime()).getTime()));
-			ps.setString(3, t.getDayId());
-			ps.execute();
-
-			ps.close();
 			resultSet.close();
+			ps.close();
+
+			return schedule;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Failed in getting ScheduleTimeInfo: " + e.getMessage());
+		}
+	}
+
+	public boolean openDay(ArrayList<Timeslot> tal) throws Exception {
+		try {
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Schedule");
+
+			for (Timeslot t : tal) {
+				ps = conn.prepareStatement("INSERT INTO Timeslot(timeslotUUID,beginTime,dayUUID) values(?,?,?);");
+				ps.setString(1, t.getId());
+				ps.setTime(2, new Time(Time_formatter.parse(t.getBeginTime()).getTime()));
+				ps.setString(3, t.getDayId());
+				ps.execute();
+			}
+			ps.close();
 			return true;
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new Exception("Failed to open 1 Timeslot: " + e.getMessage());
+			throw new Exception("Failed to open a DAY of Timeslot: " + e.getMessage());
 		}
 	}
 
