@@ -91,10 +91,15 @@ public class TimeslotDAO {
 		}
 	}
 
-	public Schedule getScheduleTimeInfo(String suuid) throws Exception {
+	public Schedule getScheduleTimeInfo(String suuid, String duuid) throws Exception {
 
 		try {
 			Schedule schedule = new Schedule();
+			ArrayList<Day> dal = new ArrayList<Day>();
+			ArrayList<Timeslot> tal = new ArrayList<Timeslot>();
+			Day d = new Day();
+			
+			
 			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Schedule WHERE scheduleUUID=?;");
 			ps.setString(1, suuid);
 			ResultSet resultSet = ps.executeQuery();
@@ -105,7 +110,24 @@ public class TimeslotDAO {
 				schedule.setStartTime(resultSet.getTime("startTime").toString().substring(0, 5));
 				schedule.setEndTime(resultSet.getTime("endTime").toString().substring(0, 5));
 			}
-
+			
+			ps = conn.prepareStatement("SELECT * FROM Timeslot WHERE dayUUID=? ORDER BY beginTime;");
+			ps.setString(1, duuid);
+		    resultSet = ps.executeQuery();
+		    
+		    while (resultSet.next()) {
+		    	Timeslot tempT = new Timeslot();
+				tempT.setId(resultSet.getString("timeslotUUID"));
+				tempT.setBeginTime(resultSet.getTime("beginTime").toString().substring(0, 5));
+				tempT.setDayId(duuid);
+				tal.add(tempT);
+			}
+		    
+		    d.setId(duuid);
+		    d.setTimeslots(tal);
+		    dal.add(d);
+		    schedule.setDays(dal);
+		    
 			resultSet.close();
 			ps.close();
 
