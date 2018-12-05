@@ -209,6 +209,9 @@ public class TimeslotDAO {
 			
 			for (Day d : dal) {
 				d.setTimeslots(retrieveTALByDay(d.getId(), beginTime));
+				if(!d.getTimeslots().isEmpty()) {
+					dal.remove(d);
+				}
 			}
 
 			resultSet.close();
