@@ -86,7 +86,7 @@ public class DeleteTimeslotsByDayHandler implements RequestStreamHandler{
 				if (deleteTimeslotsByDay(req.dayId)) {
 					resp = new DeleteTimeslotsByDayResponse("Successfully Delete Timeslots by Day ID: " + req.dayId);
 				} else {
-					resp = new DeleteTimeslotsByDayResponse("Day ID does not exist", 405);
+					resp = new DeleteTimeslotsByDayResponse("Timeslots in Day does not exist", 405);
 				}
 			} catch (Exception e) {
 				resp = new DeleteTimeslotsByDayResponse("Unable to Delete Timeslots by Day ID: " + req.dayId + "(" + e.getMessage() + ")", 403);
