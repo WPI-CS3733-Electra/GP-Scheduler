@@ -12,6 +12,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import com.amazonaws.db.MeetingDAO;
+import com.amazonaws.db.TimeslotDAO;
 import com.amazonaws.model.Meeting;
 import com.amazonaws.model.Timeslot;
 import com.amazonaws.services.lambda.runtime.Context;
