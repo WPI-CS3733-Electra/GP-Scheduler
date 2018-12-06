@@ -155,7 +155,7 @@ public class SchedulerDAO {
 			}
 
 			int dalSize = dal.size();
-			if (dalSize != 5 && dalSize >= 0) {
+			if (dalSize != 5 && dalSize != 0) {
 				LocalDate listStartDate = LocalDate.parse(dal.get(0).getDate());
 				int startDayofWeek = listStartDate.getDayOfWeek().getValue();
 				LocalDate listEndDate = LocalDate.parse(dal.get(dal.size() - 1).getDate());
@@ -176,6 +176,14 @@ public class SchedulerDAO {
 					}
 				}
 
+			}
+			
+			if(dalSize == 0) {
+				for (int i = 1; i <= 5; i++) {
+					Day tempD = new Day();
+					tempD.setDate(startDate.minusDays(i).toString());
+					dal.add(0, tempD);
+				}
 			}
 
 			return dal;
