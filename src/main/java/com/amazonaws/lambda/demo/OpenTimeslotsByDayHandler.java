@@ -62,9 +62,14 @@ public class OpenTimeslotsByDayHandler implements RequestStreamHandler {
 	
 		for(int i = 0; i < numOfTs; i++ ) {
 			LocalTime beginTime = calBeginTime(startTime,timePeriod,i);
-			if(beginTime.equals(stringToTime(list.get(i).getBeginTime()))){}
+			String tsId = this.genUUIDString();
+			if(i >= list.size()) {
+				Timeslot ts = new Timeslot(tsId,beginTime.toString(),null,dayId);
+				tslist.add(ts);
+				list.add(ts);
+			}
+			else if(beginTime.equals(stringToTime(list.get(i).getBeginTime()))){}
 			else {
-				String tsId = this.genUUIDString();
 				Timeslot ts = new Timeslot(tsId,beginTime.toString(),null,dayId);
 				tslist.add(ts);
 				list.add(i, ts);
