@@ -192,6 +192,7 @@ public class TimeslotDAO {
 
 		try {
 			ArrayList<Day> dal = new ArrayList<Day>();
+			ArrayList<Day> returnDAL = new ArrayList<Day>();
 
 			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Day WHERE scheduleUUID=? ORDER BY date;");
 			ps.setString(1, suuid);
@@ -203,17 +204,17 @@ public class TimeslotDAO {
 				dal.add(tempD);
 			}
 
-			for (int i = 0; i < dal.size(); i++) {
-				dal.get(i).setTimeslots(retrieveTALByDay(dal.get(i).getId(), beginTime));
-				if (!dal.get(i).getTimeslots().isEmpty()) {
-					dal.remove(i);
+			for (Day d : dal) {
+				d.setTimeslots(retrieveTALByDay(d.getId(), beginTime));
+				if (d.getTimeslots().isEmpty()) {
+					returnDAL.add(d);
 				}
 			}
 
 			resultSet.close();
 			ps.close();
 
-			return dal;
+			return returnDAL;
 
 		} catch (Exception e) {
 			e.printStackTrace();
