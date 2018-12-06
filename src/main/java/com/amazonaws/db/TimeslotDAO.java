@@ -98,8 +98,7 @@ public class TimeslotDAO {
 			ArrayList<Day> dal = new ArrayList<Day>();
 			ArrayList<Timeslot> tal = new ArrayList<Timeslot>();
 			Day d = new Day();
-			
-			
+
 			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Schedule WHERE scheduleUUID=?;");
 			ps.setString(1, suuid);
 			ResultSet resultSet = ps.executeQuery();
@@ -110,24 +109,24 @@ public class TimeslotDAO {
 				schedule.setStartTime(resultSet.getTime("startTime").toString().substring(0, 5));
 				schedule.setEndTime(resultSet.getTime("endTime").toString().substring(0, 5));
 			}
-			
+
 			ps = conn.prepareStatement("SELECT * FROM Timeslot WHERE dayUUID=? ORDER BY beginTime;");
 			ps.setString(1, duuid);
-		    resultSet = ps.executeQuery();
-		    
-		    while (resultSet.next()) {
-		    	Timeslot tempT = new Timeslot();
+			resultSet = ps.executeQuery();
+
+			while (resultSet.next()) {
+				Timeslot tempT = new Timeslot();
 				tempT.setId(resultSet.getString("timeslotUUID"));
 				tempT.setBeginTime(resultSet.getTime("beginTime").toString().substring(0, 5));
 				tempT.setDayId(duuid);
 				tal.add(tempT);
 			}
-		    
-		    d.setId(duuid);
-		    d.setTimeslots(tal);
-		    dal.add(d);
-		    schedule.setDays(dal);
-		    
+
+			d.setId(duuid);
+			d.setTimeslots(tal);
+			dal.add(d);
+			schedule.setDays(dal);
+
 			resultSet.close();
 			ps.close();
 
@@ -166,6 +165,16 @@ public class TimeslotDAO {
 		}
 
 		try {
+			/*
+			 * PreparedStatement ps =
+			 * conn.prepareStatement("SELECT * FROM Timeslot WHERE dayUUID=?;");
+			 * ps.setString(1, duuid); ResultSet resultSet = ps.executeQuery();
+			 * 
+			 * // not present? if (!resultSet.next()) { resultSet.close(); return false; }
+			 * 
+			 * resultSet.close();
+			 */
+
 			PreparedStatement ps = conn.prepareStatement("DELETE FROM Timeslot WHERE dayUUID=?;");
 			ps.setString(1, duuid);
 			ps.execute();
@@ -184,8 +193,7 @@ public class TimeslotDAO {
 		try {
 			ArrayList<Day> dal = new ArrayList<Day>();
 
-			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM Day WHERE scheduleUUID=? ORDER BY date;");
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Day WHERE scheduleUUID=? ORDER BY date;");
 			ps.setString(1, suuid);
 			ResultSet resultSet = ps.executeQuery();
 
@@ -194,10 +202,10 @@ public class TimeslotDAO {
 				tempD.setId(resultSet.getString("dayUUID"));
 				dal.add(tempD);
 			}
-			
-			for (int i=0; i<dal.size(); i++) {
+
+			for (int i = 0; i < dal.size(); i++) {
 				dal.get(i).setTimeslots(retrieveTALByDay(dal.get(i).getId(), beginTime));
-				if(!dal.get(i).getTimeslots().isEmpty()) {
+				if (!dal.get(i).getTimeslots().isEmpty()) {
 					dal.remove(i);
 				}
 			}
@@ -213,7 +221,7 @@ public class TimeslotDAO {
 		}
 
 	}
-	
+
 	public ArrayList<Timeslot> retrieveTALByDay(String duuid, String beginTime) throws Exception {
 		try {
 			ArrayList<Timeslot> tal = new ArrayList<Timeslot>();
@@ -232,7 +240,7 @@ public class TimeslotDAO {
 
 			resultSet.close();
 			ps.close();
-			
+
 			return tal;
 
 		} catch (Exception e) {
