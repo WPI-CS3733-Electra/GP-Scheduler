@@ -46,7 +46,7 @@ public class OrganizerGetScheduleIdHandler implements RequestStreamHandler{
 		JSONObject responseJson = new JSONObject();
 		responseJson.put("headers", headerJson);
 
-		ShowWeekScheduleResponse response = null;
+		OrganizerGetScheduleIdResponse response = null;
 		
 		// extract body from incoming HTTP POST request. If any error, then return 422 error
 		String body;
@@ -60,7 +60,7 @@ public class OrganizerGetScheduleIdHandler implements RequestStreamHandler{
 			String method = (String) event.get("httpMethod");
 			if (method != null && method.equalsIgnoreCase("OPTIONS")) {
 				logger.log("Options request");
-				response = new ShowWeekScheduleResponse("name", 200);  // OPTIONS needs a 200 response
+				response = new OrganizerGetScheduleIdResponse("name", 200);  // OPTIONS needs a 200 response
 		        responseJson.put("body", new Gson().toJson(response));
 		        processed = true;
 		        body = null;
@@ -72,7 +72,7 @@ public class OrganizerGetScheduleIdHandler implements RequestStreamHandler{
 			}
 		} catch (ParseException pe) {
 			logger.log(pe.toString());
-			response = new ShowWeekScheduleResponse("Bad Request:" + pe.getMessage(), 404);  // unable to process input
+			response = new OrganizerGetScheduleIdResponse("Bad Request:" + pe.getMessage(), 404);  // unable to process input
 	        responseJson.put("body", new Gson().toJson(response));
 	        processed = true;
 	        body = null;

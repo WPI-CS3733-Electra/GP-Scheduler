@@ -6,28 +6,39 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.UUID;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
-import com.amazonaws.db.MeetingDAO;
+import com.amazonaws.db.TimeslotDAO;
+import com.amazonaws.model.Day;
+import com.amazonaws.model.Timeslot;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.google.gson.Gson;
 
-public class ParticipantCancelMeetingHandler implements RequestStreamHandler {
+public class DeleteTimeslotsByTimeHandler implements RequestStreamHandler{
 	public LambdaLogger logger = null;
+
+	//ArrayList<String> dayID = new ArrayList<String>();
+	//ArrayList<Timeslot> timeslots = new ArrayList<Timeslot>();
+	//String ct;
 
 	/** Load from RDS, if it exists
 	 * 
 	 * @throws Exception 
 	 */
-	boolean cancelMeetingPar(String id, String secretCode) throws Exception {
-		if (logger != null) { logger.log("Organizer Cancel Meeting by Meeting id: " + id); }
-		MeetingDAO dao = new MeetingDAO();
-		return dao.deleteMeeting(id, secretCode);
+
+		
+	boolean DeleteTimeslotsByTime(String scheduleId, String beginTime) throws Exception {
+		if (logger != null) { logger.log("open timeslots in by timePeriod"); }
+		
+		TimeslotDAO dao = new TimeslotDAO();
+		
+		return dao.deleteTimeslotByTime(scheduleId, beginTime);
 	}
 	
 	
@@ -44,7 +55,7 @@ public class ParticipantCancelMeetingHandler implements RequestStreamHandler {
 		JSONObject responseJson = new JSONObject();
 		responseJson.put("headers", headerJson);
 
-		ParticipantCancelMeetingResponse response = null;
+		DeleteTimeslotsByTimeResponse response = null;
 		
 		// extract body from incoming HTTP POST request. If any error, then return 422 error
 		String body;
@@ -58,7 +69,7 @@ public class ParticipantCancelMeetingHandler implements RequestStreamHandler {
 			String method = (String) event.get("httpMethod");
 			if (method != null && method.equalsIgnoreCase("OPTIONS")) {
 				logger.log("Options request");
-				response = new ParticipantCancelMeetingResponse("name", 200);  // OPTIONS needs a 200 response
+				response = new DeleteTimeslotsByTimeResponse("name", 200);  // OPTIONS needs a 200 response
 		        responseJson.put("body", new Gson().toJson(response));
 		        processed = true;
 		        body = null;
@@ -68,27 +79,27 @@ public class ParticipantCancelMeetingHandler implements RequestStreamHandler {
 					body = event.toJSONString();  // this is only here to make testing easier
 				}
 			}
-		} catch (ParseException pe) {
+		} catch (org.json.simple.parser.ParseException pe) {
 			logger.log(pe.toString());
-			response = new ParticipantCancelMeetingResponse("Bad Request:" + pe.getMessage(), 404);  // unable to process input
+			response = new DeleteTimeslotsByTimeResponse("Bad Request:" + pe.getMessage(), 422);  // unable to process input
 	        responseJson.put("body", new Gson().toJson(response));
 	        processed = true;
 	        body = null;
 		}
 
 		if (!processed) {
-			ParticipantCancelMeetingRequest req = new Gson().fromJson(body, ParticipantCancelMeetingRequest.class);
+			DeleteTimeslotsByTimeRequest req = new Gson().fromJson(body, DeleteTimeslotsByTimeRequest.class);
 			logger.log(req.toString());
 
-			ParticipantCancelMeetingResponse resp;
+			DeleteTimeslotsByTimeResponse resp;
 			try {
-				if (cancelMeetingPar(req.id, req.secretCode)) {
-					resp = new ParticipantCancelMeetingResponse("Successfully Cancel Meeting by Id: " + req.id);
+				if (DeleteTimeslotsByTime(req.scheduleId, req.beginTime)) {
+					resp = new DeleteTimeslotsByTimeResponse("Successfully Delete Timeslots Start at: " + req.beginTime);
 				} else {
-					resp = new ParticipantCancelMeetingResponse("Meeting does not exist", 405);
+					resp = new DeleteTimeslotsByTimeResponse("timeslots do not exist: ", 405);
 				}
 			} catch (Exception e) {
-				resp = new ParticipantCancelMeetingResponse("Unable to Cancel Meeting by Id: " + req.id + "(" + e.getMessage() + ")", 403);
+				resp = new DeleteTimeslotsByTimeResponse("Unable to create timeslots:" + "(" + e.getMessage() + ")", 403);
 			}
 
 			// compute proper response
@@ -101,8 +112,5 @@ public class ParticipantCancelMeetingHandler implements RequestStreamHandler {
         writer.write(responseJson.toJSONString());  
         writer.close();
 	}
-	
 
-	
-	
 }
