@@ -62,14 +62,17 @@ public class ShowWeekScheduleHandler implements RequestStreamHandler{
 			else {
 			for(int j = 0; j < numOfTs; j ++) {
 				LocalTime beginTime = calBeginTime(startTime, timePeriod, j);
-
+				if(j > tslist.size()) {
+					tslist.add(null);
+				}
+				else {
 				if(stringToTime(tslist.get(j).getBeginTime()).equals(beginTime)) {}
 				else {
 					tslist.add(j, null);
 				}
-			}
+				}
 			}	
-			
+			}
 		}
 		
 		return origin;
