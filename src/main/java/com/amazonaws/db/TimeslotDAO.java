@@ -166,19 +166,7 @@ public class TimeslotDAO {
 		}
 
 		try {
-			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Timeslot WHERE dayUUID=?;");
-			ps.setString(1, duuid);
-			ResultSet resultSet = ps.executeQuery();
-
-			// not present?
-			if (!resultSet.next()) {
-				resultSet.close();
-				return false;
-			}
-
-			resultSet.close();
-
-			ps = conn.prepareStatement("DELETE FROM Timeslot WHERE dayUUID=?;");
+			PreparedStatement ps = conn.prepareStatement("DELETE FROM Timeslot WHERE dayUUID=?;");
 			ps.setString(1, duuid);
 			ps.execute();
 
@@ -207,10 +195,10 @@ public class TimeslotDAO {
 				dal.add(tempD);
 			}
 			
-			for (Day d : dal) {
-				d.setTimeslots(retrieveTALByDay(d.getId(), beginTime));
-				if(!d.getTimeslots().isEmpty()) {
-					dal.remove(d);
+			for (int i=0; i<dal.size(); i++) {
+				dal.get(i).setTimeslots(retrieveTALByDay(dal.get(i).getId(), beginTime));
+				if(!dal.get(i).getTimeslots().isEmpty()) {
+					dal.remove(i);
 				}
 			}
 

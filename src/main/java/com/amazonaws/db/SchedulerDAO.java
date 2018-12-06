@@ -133,7 +133,7 @@ public class SchedulerDAO {
 			ArrayList<Day> dal = new ArrayList<Day>();
 
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT DISTINCT d.ScheduleUUID, dayUUID, date FROM Day d INNER JOIN Schedule s ON d.ScheduleUUID = s.ScheduleUUID WHERE (d.scheduleUUID=?) AND (d.date>=?) AND (d.date<=?) ORDER BY date;");
+					"SELECT * FROM Day WHERE (scheduleUUID=?) AND (date>=?) AND (date<=?) ORDER BY date;");
 			ps.setString(1, suuid);
 			ps.setDate(2, java.sql.Date.valueOf(startDate));
 			ps.setDate(3, java.sql.Date.valueOf(endDate));
@@ -197,7 +197,7 @@ public class SchedulerDAO {
 			ArrayList<Timeslot> tal = new ArrayList<Timeslot>();
 
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT DISTINCT t.dayUUID, timeslotUUID, beginTime FROM Timeslot t INNER JOIN Day d ON t.dayUUID = d.dayUUID WHERE t.dayUUID=? ORDER BY beginTime;");
+					"SELECT * FROM Timeslot WHERE dayUUID=? ORDER BY beginTime;");
 			ps.setString(1, duuid);
 			ResultSet resultSet = ps.executeQuery();
 
@@ -235,7 +235,7 @@ public class SchedulerDAO {
 			boolean hasMeeting = false;
 
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT DISTINCT m.timeslotUUID, meetingUUID, partInfo, secretCode FROM Meeting m INNER JOIN Timeslot t ON m.timeslotUUID = t.timeslotUUID WHERE m.timeslotUUID=?;");
+					"SELECT * FROM Meeting WHERE timeslotUUID=?;");
 			ps.setString(1, tuuid);
 			ResultSet resultSet = ps.executeQuery();
 
