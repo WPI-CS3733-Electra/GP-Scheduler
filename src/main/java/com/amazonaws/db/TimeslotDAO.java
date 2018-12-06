@@ -203,10 +203,10 @@ public class TimeslotDAO {
 				dal.add(tempD);
 			}
 
-			for (int i = 0; i < dal.size(); i++) {
-				dal.get(i).setTimeslots(retrieveTALByDay(dal.get(i).getId(), beginTime));
-				if (!dal.get(i).getTimeslots().isEmpty()) {
-					dal.remove(i);
+			for (Day d : dal) {
+				d.setTimeslots(retrieveTALByDay(d.getId(), beginTime));
+				if (!d.getTimeslots().isEmpty()) {
+					dal.remove(d);
 				}
 			}
 
