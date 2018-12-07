@@ -68,15 +68,19 @@ public class CreateScheduleHandler implements RequestStreamHandler{
 		// Create the list of days, also the sub-structures.
 		for(int i = 0; i <= numOfDays; i++) {
 			String dId = this.genUUIDString();
-			String d = this.calDate(startDate, i).toString();
+			LocalDate d = this.calDate(startDate, i);
 			ArrayList<Timeslot> ts = new ArrayList<Timeslot>();
 			for(int j = 0; j < numOfTs; j ++) {
 				String t = this.calBeginTime(startTime, timePeriod, j).toString();
 				Timeslot timeslot = new Timeslot(this.genUUIDString(),t, null, dId);
 				ts.add(timeslot);
 			}
-			Day day = new Day(dId,d,ts,sId);
-			days.add(day);
+			Day day = new Day(dId,d.toString(),ts,sId);
+			
+			if(!(d.getDayOfWeek() == 6 || d.getDayOfWeek() ==7)) {
+				days.add(day);
+			}
+
 			//timeslots = ts;
 			//dayID.add(dId);
 		}
