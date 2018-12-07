@@ -61,7 +61,13 @@ public class MeetingDAO {
 			ps.setString(3, m.getTimeslotId());
 			ps.setString(4, m.getSecretCode());
 			ps.execute();
-
+			
+			//update Timeslot in DB set TRUE
+			ps = conn.prepareStatement("UPDATE Timeslot SET hasMeeting=? WHERE timeslotUUID=?;");
+			ps.setBoolean(1, true);
+			ps.setString(2, m.getTimeslotId());
+			ps.execute();
+			
 			ps.close();
 			resultSet.close();
 			return true;
@@ -79,13 +85,19 @@ public class MeetingDAO {
 		}
 
 		try {
+			String tuuid = "";
+			Boolean present = false;
+			
 			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Meeting WHERE meetingUUID=?;");
 			ps.setString(1, muuid);
 			ResultSet resultSet = ps.executeQuery();
-
-			// not present?
-			if (!resultSet.next()) {
-				resultSet.close();
+			
+			while(resultSet.next()) {
+				tuuid = resultSet.getString("timeslotUUID");
+				present = true;
+			}
+			
+			if (!present) {
 				return false;
 			}
 			
@@ -93,6 +105,12 @@ public class MeetingDAO {
 
 			ps = conn.prepareStatement("DELETE FROM Meeting WHERE meetingUUID=?;");
 			ps.setString(1, muuid);
+			ps.execute();
+			
+			//update Timeslot in DB set FALSE
+			ps = conn.prepareStatement("UPDATE Timeslot SET hasMeeting=? WHERE timeslotUUID=?;");
+			ps.setBoolean(1, false);
+			ps.setString(2, tuuid);
 			ps.execute();
 
 			ps.close();
@@ -112,12 +130,15 @@ public class MeetingDAO {
 
 		try {
 			String dbSecretCode = "a";
+			String tuuid = "";
+
 			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Meeting WHERE meetingUUID=?;");
 			ps.setString(1, muuid);
 			ResultSet resultSet = ps.executeQuery();
 
 			// not present?
 			while (resultSet.next()) {
+				tuuid = resultSet.getString("timeslotUUID");
 				dbSecretCode = resultSet.getString("secretCode");
 			}
 			resultSet.close();
@@ -129,6 +150,13 @@ public class MeetingDAO {
 			ps = conn.prepareStatement("DELETE FROM Meeting WHERE meetingUUID=?;");
 			ps.setString(1, muuid);
 			ps.execute();
+			
+			//update Timeslot in DB set FALSE
+			ps = conn.prepareStatement("UPDATE Timeslot SET hasMeeting=? WHERE timeslotUUID=?;");
+			ps.setBoolean(1, false);
+			ps.setString(2, tuuid);
+			ps.execute();
+			
 			ps.close();
 			return true;
 
