@@ -7,6 +7,8 @@ public class SearchResult {
 	String endTime;
 	String timeslotId;
 	
+	public SearchResult() {};
+	
 	public SearchResult(String date, String beginTime, String endTime, String timeslotId) {
 		this.date = date;
 		this.beginTime = beginTime;
