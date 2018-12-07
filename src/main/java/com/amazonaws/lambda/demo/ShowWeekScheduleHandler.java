@@ -38,12 +38,24 @@ public class ShowWeekScheduleHandler implements RequestStreamHandler{
 	boolean validWeek(String sId, int week) throws Exception {
 		if (logger != null) { logger.log("check the week" + week); }
 		SchedulerDAO dao = new SchedulerDAO();
-		return dao.checkWeek(sId, week);
+		int realWeek = week + getStartDay(sId);
+		return dao.checkWeek(sId, realWeek);
+	}
+	
+	int getStartDay(String sId) throws Exception{
+		SchedulerDAO dao = new SchedulerDAO();
+		if(dao.getStartDayOfWeek(sId) > 5) {
+			return 1;
+		}
+		else {
+			return 0;
+		}
 	}
 	Schedule showSchedule(String sId, int week) throws Exception {
 		if (logger != null) { logger.log("get Schedule in week" + week); }
 		SchedulerDAO dao = new SchedulerDAO();
-		Schedule origin = dao.showWeek(sId, week);
+		int realWeek = week + getStartDay(sId);
+		Schedule origin = dao.showWeek(sId, realWeek);
 		String startTime = origin.getStartTime();
 		String endTime = origin.getEndTime();
 		int timePeriod = origin.getTimePeriod();
