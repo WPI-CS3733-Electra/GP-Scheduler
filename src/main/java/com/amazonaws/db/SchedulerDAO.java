@@ -79,6 +79,29 @@ public class SchedulerDAO {
 			throw new Exception("Failed in getting schedule: " + e.getMessage());
 		}
 	}
+	
+	public int getStartDayOfWeek(String suuid) throws Exception {
+
+		try {
+			int startDay = 0;
+			PreparedStatement ps = conn.prepareStatement("SELECT DISTINCT scheduleUUID, startDate FROM Schedule WHERE scheduleUUID=?;");
+			ps.setString(1, suuid);
+			ResultSet resultSet = ps.executeQuery();
+
+			while (resultSet.next()) {
+				startDay = LocalDate.parse(resultSet.getString("startDate")).getDayOfWeek().getValue();
+			}
+			
+			resultSet.close();
+			ps.close();
+			
+			return startDay;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Failed ON getStartDayOfWeek: " + e.getMessage());
+		}
+	}
 
 	/**
 	 * @param suuid
