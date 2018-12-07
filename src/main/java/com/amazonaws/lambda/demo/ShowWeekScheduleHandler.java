@@ -51,6 +51,9 @@ public class ShowWeekScheduleHandler implements RequestStreamHandler{
 		int numOfTs = numOfMins / timePeriod;
 		
 		for (int i = 0; i < origin.getDays().size(); i++) {
+			if(origin.getDays().get(i).getTimeslots() != null) {
+			
+			
 			ArrayList<Timeslot> tslist = origin.getDays().get(i).getTimeslots();
 			
 			
@@ -74,6 +77,8 @@ public class ShowWeekScheduleHandler implements RequestStreamHandler{
 			}	
 			}
 		}
+		}
+		
 		
 		return origin;
 	}
