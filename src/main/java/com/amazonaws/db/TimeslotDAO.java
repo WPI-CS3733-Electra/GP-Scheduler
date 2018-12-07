@@ -175,10 +175,11 @@ public class TimeslotDAO {
 			 * resultSet.close();
 			 */
 
-			PreparedStatement ps = conn.prepareStatement("DELETE FROM Timeslot WHERE dayUUID=?;");
+			PreparedStatement ps = conn.prepareStatement("DELETE FROM Timeslot WHERE (dayUUID=?) AND (hasMeeting=?);");
 			ps.setString(1, duuid);
-			ps.execute();
+			ps.setBoolean(2, false);
 
+			ps.execute();
 			ps.close();
 			return true;
 
@@ -271,9 +272,10 @@ public class TimeslotDAO {
 			resultSet.close();
 
 			ps = conn.prepareStatement(
-					"DELETE t FROM Timeslot t INNER JOIN Day d ON t.dayUUID = d.dayUUID INNER JOIN Schedule s ON d.scheduleUUID = s.scheduleUUID WHERE (s.scheduleUUID=?) AND (t.beginTime=?);");
+					"DELETE t FROM Timeslot t INNER JOIN Day d ON t.dayUUID = d.dayUUID INNER JOIN Schedule s ON d.scheduleUUID = s.scheduleUUID WHERE (s.scheduleUUID=?) AND (t.beginTime=?) AND (t.hasMeeting=?);");
 			ps.setString(1, suuid);
 			ps.setTime(2, new Time(Time_formatter.parse(beginTime).getTime()));
+			ps.setBoolean(3, false);
 			ps.execute();
 
 			ps.close();
