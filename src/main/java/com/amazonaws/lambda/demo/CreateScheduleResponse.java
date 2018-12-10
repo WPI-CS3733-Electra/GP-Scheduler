@@ -29,24 +29,12 @@ public class CreateScheduleResponse {
 		return secretCode;
 	}
 
-	public void setSecretCode(String secretCode) {
-		this.secretCode = secretCode;
-	}
-
 	public String getReleaseCode() {
 		return releaseCode;
 	}
 
-	public void setReleaseCode(String releaseCode) {
-		this.releaseCode = releaseCode;
-	}
-
 	public String getScheduleId() {
 		return scheduleId;
-	}
-
-	public void setScheduleId(String scheduleId) {
-		this.scheduleId = scheduleId;
 	}
 
 	public String getResponse() {

@@ -12,4 +12,6 @@ public class ShowWeekScheduleRequest {
 	public String toString() {
 		return "Show week" + week;
 	}
+	
+	
 }

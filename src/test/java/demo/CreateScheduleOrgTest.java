@@ -19,16 +19,11 @@ import com.amazonaws.lambda.demo.CreateScheduleRequest;
 import com.amazonaws.lambda.demo.CreateScheduleResponse;
 import com.amazonaws.lambda.demo.PostRequest;
 import com.amazonaws.lambda.demo.PostResponse;
-//import edu.wpi.cs.heineman.demo.CreateConstantHandler;
-//import edu.wpi.cs.heineman.demo.http.CreateConstantRequest;
-//import edu.wpi.cs.heineman.demo.http.CreateConstantResponse;
-//import edu.wpi.cs.heineman.demo.http.PostRequest;
-//import edu.wpi.cs.heineman.demo.http.PostResponse;
 
 public class CreateScheduleOrgTest {
-	public final String secretCode = null;
-	public final String releaseCode = null;
-	public final String scheduleId = null;
+//	public final String secretCode = null;
+//	public final String releaseCode = null;
+//	public final String scheduleId = null;
 
 	Context createContext(String apiCall) {
         TestContext ctx = new TestContext();
