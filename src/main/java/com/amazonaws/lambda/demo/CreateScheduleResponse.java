@@ -1,8 +1,8 @@
 package com.amazonaws.lambda.demo;
 
 public class CreateScheduleResponse {
-	String response;
-	int httpcode;
+	String response; //make public for testing
+	int httpcode; //make public for testing
 	String secretCode;
 	String releaseCode;
 	String scheduleId;
@@ -24,4 +24,38 @@ public class CreateScheduleResponse {
 	public String toString() {
 		return "Response(" + response + ")";
 	}
+
+	public String getSecretCode() {
+		return secretCode;
+	}
+
+	public void setSecretCode(String secretCode) {
+		this.secretCode = secretCode;
+	}
+
+	public String getReleaseCode() {
+		return releaseCode;
+	}
+
+	public void setReleaseCode(String releaseCode) {
+		this.releaseCode = releaseCode;
+	}
+
+	public String getScheduleId() {
+		return scheduleId;
+	}
+
+	public void setScheduleId(String scheduleId) {
+		this.scheduleId = scheduleId;
+	}
+
+	public String getResponse() {
+		return response;
+	}
+
+	public int getHttpcode() {
+		return httpcode;
+	}
+	
+	
 }

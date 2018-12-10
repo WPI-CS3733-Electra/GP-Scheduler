@@ -90,6 +90,7 @@ public class CreateScheduleHandler implements RequestStreamHandler{
 		return dao.addSchedule(Schedule);
 	}
 	
+	/*ID generator*/
 	String genUUIDString() {
 		UUID u = UUID.randomUUID();
 		String s = u.toString();
@@ -161,7 +162,7 @@ public class CreateScheduleHandler implements RequestStreamHandler{
 			logger.log("event:" + event.toJSONString());
 			
 			String method = (String) event.get("httpMethod");
-			if (method != null && method.equalsIgnoreCase("OPTIONS")) {
+			if (method != null && method.equalsIgnoreCase("OPTIONS")) { 
 				logger.log("Options request");
 				response = new CreateScheduleResponse("name", 200);  // OPTIONS needs a 200 response
 		        responseJson.put("body", new Gson().toJson(response));
