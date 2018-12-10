@@ -79,22 +79,23 @@ public class SchedulerDAO {
 			throw new Exception("Failed in getting schedule: " + e.getMessage());
 		}
 	}
-	
+
 	public int getStartDayOfWeek(String suuid) throws Exception {
 
 		try {
 			int startDay = 0;
-			PreparedStatement ps = conn.prepareStatement("SELECT DISTINCT scheduleUUID, startDate FROM Schedule WHERE scheduleUUID=?;");
+			PreparedStatement ps = conn
+					.prepareStatement("SELECT DISTINCT scheduleUUID, startDate FROM Schedule WHERE scheduleUUID=?;");
 			ps.setString(1, suuid);
 			ResultSet resultSet = ps.executeQuery();
 
 			while (resultSet.next()) {
 				startDay = LocalDate.parse(resultSet.getString("startDate")).getDayOfWeek().getValue();
 			}
-			
+
 			resultSet.close();
 			ps.close();
-			
+
 			return startDay;
 
 		} catch (Exception e) {
@@ -115,6 +116,7 @@ public class SchedulerDAO {
 		}
 		try {
 			Schedule schedule = new Schedule();
+			boolean hasSchedule = false;
 			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Schedule WHERE scheduleUUID=?;");
 			ps.setString(1, suuid);
 			ResultSet resultSet = ps.executeQuery();
@@ -122,6 +124,11 @@ public class SchedulerDAO {
 				schedule.setId(suuid);
 				schedule.setStartDate(resultSet.getDate("startDate").toString());
 				schedule.setEndDate(resultSet.getDate("endDate").toString());
+				hasSchedule = true;
+			}
+
+			if (!hasSchedule) {
+				return false;
 			}
 
 			LocalDate scheduleEndDate = LocalDate.parse(schedule.getEndDate());
@@ -200,8 +207,8 @@ public class SchedulerDAO {
 				}
 
 			}
-			
-			if(dalSize == 0) {
+
+			if (dalSize == 0) {
 				for (int i = 1; i <= 5; i++) {
 					Day tempD = new Day();
 					tempD.setDate(startDate.minusDays(i).toString());
@@ -227,8 +234,7 @@ public class SchedulerDAO {
 		try {
 			ArrayList<Timeslot> tal = new ArrayList<Timeslot>();
 
-			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM Timeslot WHERE dayUUID=? ORDER BY beginTime;");
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Timeslot WHERE dayUUID=? ORDER BY beginTime;");
 			ps.setString(1, duuid);
 			ResultSet resultSet = ps.executeQuery();
 
@@ -265,8 +271,7 @@ public class SchedulerDAO {
 			Meeting m = new Meeting();
 			boolean hasMeeting = false;
 
-			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM Meeting WHERE timeslotUUID=?;");
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Meeting WHERE timeslotUUID=?;");
 			ps.setString(1, tuuid);
 			ResultSet resultSet = ps.executeQuery();
 
