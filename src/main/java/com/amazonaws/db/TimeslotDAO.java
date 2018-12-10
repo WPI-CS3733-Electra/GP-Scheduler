@@ -288,4 +288,101 @@ public class TimeslotDAO {
 		}
 	}
 
+	public ArrayList<SearchResult> filterTimeslot(String suuid, int year, int month, int day, int dayOfWeek,
+			String beginTime, String endTime) throws Exception {
+		try {
+			ArrayList<SearchResult> srl = new ArrayList<SearchResult>();
+			int timePeriod = 0;
+			PreparedStatement ps = conn
+					.prepareStatement("SELECT DISTINCT scheduleUUID, timePeriod FROM Schedule WHERE scheduleUUID=?;");
+			ps.setString(1, suuid);
+			ResultSet resultSet = ps.executeQuery();
+			while (resultSet.next()) {
+				timePeriod = resultSet.getInt("timePeriod");
+			}
+
+			// schedule not found
+			if (timePeriod == 0) {
+				return srl;
+			}
+
+			String prepare = "SELECT DISTINCT timeslotUUID, beginTime, t.dayUUID, hasMeeting, date, scheduleUUID "
+					+ "FROM Timeslot t INNER JOIN Day d ON t.dayUUID=d.dayUUID "
+					+ "WHERE (scheduleUUID=?) AND (hasMeeting=?) " + "AND (year(date)>=?) AND (year(date)<=?) "
+					+ "AND (month(date)>=?) AND (month(date)<=?) " + "AND (day(date)>=?) AND (day(date)<=?) "
+					+ "AND (dayofweek(date)>=?) AND (dayofweek(date)<=?) " + "AND (beginTime>=?) AND (beginTime<=?) "
+					+ "ORDER BY date, beginTime;";
+			ps = conn.prepareStatement(prepare);
+			ps.setString(1, suuid);
+			ps.setBoolean(2, false);
+
+			if (year == 0) {
+				ps.setInt(3, 1000);
+				ps.setInt(4, 9999);
+			} else {
+				ps.setInt(3, year);
+				ps.setInt(4, year);
+			}
+
+			if (month == 0) {
+				ps.setInt(5, 1);
+				ps.setInt(6, 12);
+			} else {
+				ps.setInt(5, month);
+				ps.setInt(6, month);
+			}
+
+			if (day == 0) {
+				ps.setInt(7, 1);
+				ps.setInt(8, 31);
+			} else {
+				ps.setInt(7, day);
+				ps.setInt(8, day);
+			}
+
+			if (dayOfWeek == 0) {
+				ps.setInt(9, 0);
+				ps.setInt(10, 8);
+			} else {
+				ps.setInt(9, dayOfWeek + 1);
+				ps.setInt(10, dayOfWeek + 1);
+			}
+
+			if (beginTime.isEmpty()) {
+				ps.setTime(11, new Time(Time_formatter.parse("00:00").getTime()));
+			} else {
+				ps.setTime(11, new Time(Time_formatter.parse(beginTime).getTime()));
+			}
+
+			if (endTime.isEmpty()) {
+				ps.setTime(12, new Time(Time_formatter.parse("23:59").getTime()));
+			} else {
+				String endBeginTime = LocalTime.parse(endTime).minusMinutes(timePeriod).toString();
+				ps.setTime(12, new Time(Time_formatter.parse(endBeginTime).getTime()));
+			}
+
+			resultSet = ps.executeQuery();
+
+			while (resultSet.next()) {
+				SearchResult tempS = new SearchResult();
+				tempS.setTimeslotId(resultSet.getString("timeslotUUID"));
+				tempS.setDate(resultSet.getDate("date").toString());
+				tempS.setBeginTime(resultSet.getTime("beginTime").toString().substring(0, 5));
+				tempS.setEndTime(LocalTime.parse(resultSet.getTime("beginTime").toString().substring(0, 5))
+						.plusMinutes(timePeriod).toString());
+				srl.add(tempS);
+			}
+
+			resultSet.close();
+			ps.close();
+
+			return srl;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Failed to FILTER Timeslot: " + e.getMessage());
+		}
+
+	}
+
 }
