@@ -13,6 +13,7 @@ import java.util.Locale;
 import com.amazonaws.model.Day;
 import com.amazonaws.model.Meeting;
 import com.amazonaws.model.Schedule;
+import com.amazonaws.model.SearchResult;
 import com.amazonaws.model.Timeslot;
 
 /**
