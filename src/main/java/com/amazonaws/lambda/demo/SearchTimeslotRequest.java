@@ -1,6 +1,7 @@
 package com.amazonaws.lambda.demo;
 
 public class SearchTimeslotRequest {
+	String scheduleId;
 	int year;
 	int month;
 	int dayOfWeek;
@@ -11,7 +12,8 @@ public class SearchTimeslotRequest {
 	
 
 
-	public SearchTimeslotRequest(int year, int month, int dayOfWeek, int dayOfMonth, String beginTime, String endTime) {
+	public SearchTimeslotRequest(String scheduleId,int year, int month, int dayOfWeek, int dayOfMonth, String beginTime, String endTime) {
+		this.scheduleId = scheduleId;
 		this.year = year;
 		this.month = month;
 		this.dayOfWeek = dayOfWeek;
