@@ -35,7 +35,7 @@ public class ShowWeekScheduleTest {
 	}
 
 	@Test
-	public void testDeleteScheduleOrg() throws IOException {
+	public void testShowWeekSchedule() throws IOException {
 		CreateScheduleHandler handler = new CreateScheduleHandler();
 
 		//------------create--------------
