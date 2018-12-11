@@ -348,13 +348,13 @@ public class TimeslotDAO {
 				ps.setInt(10, dayOfWeek + 1);
 			}
 
-			if (beginTime.isEmpty()) {
+			if (beginTime == null) {
 				ps.setTime(11, new Time(Time_formatter.parse("00:00").getTime()));
 			} else {
 				ps.setTime(11, new Time(Time_formatter.parse(beginTime).getTime()));
 			}
 
-			if (endTime.isEmpty()) {
+			if (endTime == null) {
 				ps.setTime(12, new Time(Time_formatter.parse("23:59").getTime()));
 			} else {
 				String endBeginTime = LocalTime.parse(endTime).minusMinutes(timePeriod).toString();
