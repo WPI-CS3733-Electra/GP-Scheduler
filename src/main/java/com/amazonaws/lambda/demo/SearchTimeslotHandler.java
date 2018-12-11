@@ -40,7 +40,7 @@ public class SearchTimeslotHandler implements RequestStreamHandler{
 	ArrayList<SearchResult> SearchTimeslot(String scheduleId,int year, int month, int dayOfWeek, int dayOfMonth, String beginTime, String endTime) throws Exception {
 		if (logger != null) { logger.log("Search timeslot by scheduleId: " + scheduleId); }
 		TimeslotDAO dao = new TimeslotDAO();
-		return dao.filterTimeslot(scheduleId,year,month,dayOfWeek,dayOfMonth,beginTime,endTime);
+		return dao.filterTimeslot(scheduleId,year,month,dayOfMonth,dayOfWeek,beginTime,endTime);
 	}
 	
 	
