@@ -66,6 +66,7 @@ public class GetScheduleIdOrgTest {
 		//----------------get ID-----------------
 		OrganizerGetScheduleIdHandler handlerGet = new OrganizerGetScheduleIdHandler();
 
+		//TODO not yet tested
 		//----------wrong ID------------
 		
 		
