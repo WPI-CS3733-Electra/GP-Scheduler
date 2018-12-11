@@ -82,13 +82,13 @@ public class SearchTimeslotHandler implements RequestStreamHandler{
 
 			SearchTimeslotResponse resp;
 			try {
-				if (!SearchTimeslot(req.scheduleId,req.year,req.month,req.dayOfWeek,req.dayOfMonth,req.beginTime,req.endTime).isEmpty()){
+				if (!(SearchTimeslot(req.scheduleId,req.year,req.month,req.dayOfWeek,req.dayOfMonth,req.beginTime,req.endTime).isEmpty())){
 					resp = new SearchTimeslotResponse("Successfully get the open Timeslots in schedule:" + req.scheduleId,SearchTimeslot(req.scheduleId,req.year,req.month,req.dayOfWeek,req.dayOfMonth,req.beginTime,req.endTime) );
 				} else {
 					resp = new SearchTimeslotResponse("Open timeslot does not exists under your search conditions", 405);
 				}
 			} catch (Exception e) {
-				resp = new SearchTimeslotResponse("Unable to search timslots " + req.scheduleId + "(" + e.getMessage() + ")", 403);
+				resp = new SearchTimeslotResponse("Unable to search timeslots " + req.scheduleId + "(" + e.getMessage() + ")", 403);
 			}
 
 			// compute proper response
