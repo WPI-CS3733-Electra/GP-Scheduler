@@ -24,18 +24,6 @@ public class SearchTimeslotHandler implements RequestStreamHandler{
 	
 	public LambdaLogger logger = null;
 
-
-	boolean validWeek(String sId, int week) throws Exception {
-		if (logger != null) { logger.log("check the week" + week); }
-		SchedulerDAO dao = new SchedulerDAO();
-		int realWeek = week + getStartDay(sId);
-		if(week == 0) {
-			return false;
-		}
-		else {
-			return dao.checkWeek(sId, realWeek);	
-		}	
-	}
 	
 	ArrayList<SearchResult> SearchTimeslot(String scheduleId,int year, int month, int dayOfWeek, int dayOfMonth, String beginTime, String endTime) throws Exception {
 		if (logger != null) { logger.log("Search timeslot by scheduleId: " + scheduleId); }
@@ -43,16 +31,6 @@ public class SearchTimeslotHandler implements RequestStreamHandler{
 		return dao.filterTimeslot(scheduleId,year,month,dayOfMonth,dayOfWeek,beginTime,endTime);
 	}
 	
-	
-	int getStartDay(String sId) throws Exception{
-		SchedulerDAO dao = new SchedulerDAO();
-		if(dao.getStartDayOfWeek(sId) > 5) {
-			return 1;
-		}
-		else {
-			return 0;
-		}
-	}
 	@Override
 	public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
 		logger = context.getLogger();
@@ -104,10 +82,10 @@ public class SearchTimeslotHandler implements RequestStreamHandler{
 
 			SearchTimeslotResponse resp;
 			try {
-				if (validWeek(req.scheduleId, 1)){
+				if (!SearchTimeslot(req.scheduleId,req.year,req.month,req.dayOfWeek,req.dayOfMonth,req.beginTime,req.endTime).isEmpty()){
 					resp = new SearchTimeslotResponse("Successfully get the open Timeslots in schedule:" + req.scheduleId,SearchTimeslot(req.scheduleId,req.year,req.month,req.dayOfWeek,req.dayOfMonth,req.beginTime,req.endTime) );
 				} else {
-					resp = new SearchTimeslotResponse("Open timslot does not exists under your search conditions", 405);
+					resp = new SearchTimeslotResponse("Open timeslot does not exists under your search conditions", 405);
 				}
 			} catch (Exception e) {
 				resp = new SearchTimeslotResponse("Unable to search timslots " + req.scheduleId + "(" + e.getMessage() + ")", 403);
