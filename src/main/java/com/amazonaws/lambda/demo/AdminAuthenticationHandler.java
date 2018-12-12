@@ -11,30 +11,32 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.amazonaws.db.MeetingDAO;
+import com.amazonaws.db.AdminDAO;
+import com.amazonaws.db.TimeslotDAO;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.google.gson.Gson;
 
-public class ParticipantCancelMeetingHandler implements RequestStreamHandler {
+public class AdminAuthenticationHandler implements RequestStreamHandler {
 	public LambdaLogger logger = null;
 
 	/** Load from RDS, if it exists
 	 * 
 	 * @throws Exception 
 	 */
-	boolean cancelMeetingPar(String id, String secretCode) throws Exception {
-		if (logger != null) { logger.log("Organizer Cancel Meeting by Meeting id: " + id); }
-		MeetingDAO dao = new MeetingDAO();
-		return dao.deleteMeeting(id, secretCode);
+	boolean CheckOath(String secretCode) throws Exception  {
+		if (logger != null) { logger.log("Check Oath by: " + secretCode); }
+		AdminDAO dao = new AdminDAO();
+		return dao.Oath(secretCode);
+		
 	}
 	
 	
 	@Override
 	public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
 		logger = context.getLogger();
-		logger.log("Loading Java Lambda handler to Cancel Meeting by Participant's Meeting secretCode");
+		logger.log("Loading Java Lambda handler to check authorization");
 
 		JSONObject headerJson = new JSONObject();
 		headerJson.put("Content-Type",  "application/json");  // not sure if needed anymore?
@@ -44,7 +46,7 @@ public class ParticipantCancelMeetingHandler implements RequestStreamHandler {
 		JSONObject responseJson = new JSONObject();
 		responseJson.put("headers", headerJson);
 
-		ParticipantCancelMeetingResponse response = null;
+		AdminAuthenticationResponse response = null;
 		
 		// extract body from incoming HTTP POST request. If any error, then return 422 error
 		String body;
@@ -58,7 +60,7 @@ public class ParticipantCancelMeetingHandler implements RequestStreamHandler {
 			String method = (String) event.get("httpMethod");
 			if (method != null && method.equalsIgnoreCase("OPTIONS")) {
 				logger.log("Options request");
-				response = new ParticipantCancelMeetingResponse("name", 200);  // OPTIONS needs a 200 response
+				response = new AdminAuthenticationResponse("name", 200);  // OPTIONS needs a 200 response
 		        responseJson.put("body", new Gson().toJson(response));
 		        processed = true;
 		        body = null;
@@ -70,25 +72,25 @@ public class ParticipantCancelMeetingHandler implements RequestStreamHandler {
 			}
 		} catch (ParseException pe) {
 			logger.log(pe.toString());
-			response = new ParticipantCancelMeetingResponse("Bad Request:" + pe.getMessage(), 404);  // unable to process input
+			response = new AdminAuthenticationResponse("Bad Request:" + pe.getMessage(), 404);  // unable to process input
 	        responseJson.put("body", new Gson().toJson(response));
 	        processed = true;
 	        body = null;
 		}
 
 		if (!processed) {
-			ParticipantCancelMeetingRequest req = new Gson().fromJson(body, ParticipantCancelMeetingRequest.class);
+			AdminAuthenticationRequest req = new Gson().fromJson(body, AdminAuthenticationRequest.class);
 			logger.log(req.toString());
 
-			ParticipantCancelMeetingResponse resp;
+			AdminAuthenticationResponse resp;
 			try {
-				if (cancelMeetingPar(req.id, req.secretCode)) {
-					resp = new ParticipantCancelMeetingResponse("Successfully Cancel Meeting by Id: " + req.id);
+				if (CheckOath(req.secretCode)) {
+					resp = new AdminAuthenticationResponse("Check Authentication Succeed: " + req.secretCode);
 				} else {
-					resp = new ParticipantCancelMeetingResponse("Meeting does not exist", 405);
+					resp = new AdminAuthenticationResponse("Check Authentication Failed", 405);
 				}
 			} catch (Exception e) {
-				resp = new ParticipantCancelMeetingResponse("Unable to Cancel Meeting by Id: " + req.id + "(" + e.getMessage() + ")", 403);
+				resp = new AdminAuthenticationResponse("SecretCode Unreadable: " + req.secretCode + "(" + e.getMessage() + ")", 403);
 			}
 
 			// compute proper response
@@ -101,8 +103,6 @@ public class ParticipantCancelMeetingHandler implements RequestStreamHandler {
         writer.write(responseJson.toJSONString());  
         writer.close();
 	}
-	
-
-	
-	
 }
+
+
