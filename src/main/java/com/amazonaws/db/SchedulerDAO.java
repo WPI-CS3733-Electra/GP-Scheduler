@@ -576,4 +576,79 @@ public class SchedulerDAO {
 		}
 	}
 
+	// ---------------------Liter 3---------------------------
+	
+	public Schedule getScheduleInfo(String suuid) throws Exception {
+
+		try {
+			Schedule schedule = new Schedule();
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Schedule WHERE scheduleUUID=?;");
+			ps.setString(1, suuid);
+			ResultSet resultSet = ps.executeQuery();
+
+			while (resultSet.next()) {
+				schedule.setId(resultSet.getString("scheduleUUID"));
+				schedule.setTimePeriod(resultSet.getInt("timePeriod"));
+				schedule.setStartTime(resultSet.getTime("startTime").toString().substring(0, 5));
+				schedule.setEndTime(resultSet.getTime("endTime").toString().substring(0, 5));
+				schedule.setStartDate(resultSet.getDate("startDate").toString());
+				schedule.setEndDate(resultSet.getDate("endDate").toString());
+			}
+
+			return schedule;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Failed in getScheduleInfo: " + e.getMessage());
+		}
+	}
+
+
+	public boolean extendDate(String suuid, String startDate, String endDate, ArrayList<Day> dal) throws Exception {
+
+		if (conn == null) {
+			return false;
+		}
+
+		try {
+			String testID = null;
+				
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM Schedule WHERE scheduleUUID=?");
+			ps.setString(1, suuid);
+			ResultSet resultSet = ps.executeQuery();
+			
+			//test if schedule exists
+			while (resultSet.next()) {
+				testID = suuid;
+			}
+			if (testID==null) {
+				return false;
+			}
+			
+			//update Schedule
+			ps = conn.prepareStatement("UPDATE Schedule SET startDate=?, endDate=? WHERE scheduleUUID=?;");
+			ps.setDate(1, java.sql.Date.valueOf(startDate));
+			ps.setDate(2, java.sql.Date.valueOf(endDate));
+			ps.setString(3, suuid);
+			ps.execute();
+
+			//insert Day list
+			for (Day d : dal) {
+				ps = conn.prepareStatement("INSERT INTO Day(dayUUID,date,scheduleUUID) values(?,?,?);");
+				ps.setString(1, d.getId());
+				ps.setDate(2, java.sql.Date.valueOf(d.getDate()));
+				ps.setString(3, d.getScheduleId());
+				ps.execute();
+				addTimeslotfromAL(d.getId(), d.getTimeslots());
+			}
+			
+			ps.close();
+			return true;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Failed to Extend Date: " + e.getMessage());
+		}
+	}
+
 }
