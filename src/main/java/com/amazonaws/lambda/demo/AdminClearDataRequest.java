@@ -6,18 +6,15 @@ public class AdminClearDataRequest {
 	int days;
 	
 	
-	public String getCode() {
-		return code;
-	}
-	public void setCode(String code) {
+	public AdminClearDataRequest(String code, int days) {
 		this.code = code;
-	}
-	public int getDays() {
-		return days;
-	}
-	public void setDays(int days) {
 		this.days = days;
 	}
+	
+	public String toString() {
+		return "Clear data before: "+ days + "days.";
+	}
+
 	
 
 }
