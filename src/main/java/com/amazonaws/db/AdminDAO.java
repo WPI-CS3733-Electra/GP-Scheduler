@@ -87,13 +87,13 @@ public class AdminDAO {
 			while (resultSet.next()) {
 				BriefScheduleInfo tempB = new BriefScheduleInfo();
 				tempB.setsId(resultSet.getString("scheduleUUID"));
-				tempB.setsName(resultSet.getString("name"));
+				tempB.setName(resultSet.getString("name"));
 				tempB.setAuthor(resultSet.getString("author"));
 				tempB.setCreatedDate(resultSet.getTimestamp("createdDate").toString().substring(0, 19));
 				tempB.setStartDate(resultSet.getDate("startDate").toString());
 				tempB.setEndDate(resultSet.getDate("endDate").toString());
-				tempB.setTotalTimeslots(resultSet.getInt("countTimeslot"));
-				tempB.setTotalMeetings(resultSet.getInt("countMeeting"));
+				tempB.setTimeslots(resultSet.getInt("countTimeslot"));
+				tempB.setMeetings(resultSet.getInt("countMeeting"));
 				bal.add(tempB);
 			}
 

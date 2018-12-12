@@ -3,35 +3,28 @@ package com.amazonaws.model;
 public class BriefScheduleInfo {
 
 	String sId;
-	String sName;
+	String name;
 	String author;
 	String createdDate;
 	String startDate;
 	String endDate;
-	int totalMeetings;
-	int totalTimeslots;
+	int meetings;
+	int timeslots;
 
 	public BriefScheduleInfo() {
 	}
 
-	public BriefScheduleInfo(String sId, String sName, String author, String createdDate, String startDate,
-			String endDate, int totalMeetings, int totalTimeslots) {
+	public BriefScheduleInfo(String sId, String name, String author, String createdDate, String startDate,
+			String endDate, int meetings, int timeslots) {
+		super();
 		this.sId = sId;
-		this.sName = sName;
+		this.name = name;
 		this.author = author;
 		this.createdDate = createdDate;
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.totalMeetings = totalMeetings;
-		this.totalTimeslots = totalTimeslots;
-	}
-
-	public String getAuthor() {
-		return author;
-	}
-
-	public void setAuthor(String author) {
-		this.author = author;
+		this.meetings = meetings;
+		this.timeslots = timeslots;
 	}
 
 	public String getsId() {
@@ -42,12 +35,20 @@ public class BriefScheduleInfo {
 		this.sId = sId;
 	}
 
-	public String getsName() {
-		return sName;
+	public String getName() {
+		return name;
 	}
 
-	public void setsName(String sName) {
-		this.sName = sName;
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
 	}
 
 	public String getCreatedDate() {
@@ -74,20 +75,22 @@ public class BriefScheduleInfo {
 		this.endDate = endDate;
 	}
 
-	public int getTotalMeetings() {
-		return totalMeetings;
+	public int getMeetings() {
+		return meetings;
 	}
 
-	public void setTotalMeetings(int totalMeetings) {
-		this.totalMeetings = totalMeetings;
+	public void setMeetings(int meetings) {
+		this.meetings = meetings;
 	}
 
-	public int getTotalTimeslots() {
-		return totalTimeslots;
+	public int getTimeslots() {
+		return timeslots;
 	}
 
-	public void setTotalTimeslots(int totalTimeslots) {
-		this.totalTimeslots = totalTimeslots;
+	public void setTimeslots(int timeslots) {
+		this.timeslots = timeslots;
 	}
+	
+	
 
 }
