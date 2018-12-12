@@ -17,6 +17,9 @@ import com.amazonaws.lambda.demo.CreateScheduleResponse;
 import com.amazonaws.lambda.demo.OrganizerGetScheduleIdHandler;
 import com.amazonaws.lambda.demo.OrganizerGetScheduleIdRequest;
 import com.amazonaws.lambda.demo.OrganizerGetScheduleIdResponse;
+import com.amazonaws.lambda.demo.ParticipantGetScheduleIdHandler;
+import com.amazonaws.lambda.demo.ParticipantGetScheduleIdRequest;
+import com.amazonaws.lambda.demo.ParticipantGetScheduleIdResponse;
 import com.amazonaws.lambda.demo.PostRequest;
 import com.amazonaws.lambda.demo.PostResponse;
 import com.amazonaws.lambda.demo.ShowWeekScheduleHandler;
@@ -26,7 +29,7 @@ import com.amazonaws.model.Schedule;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.gson.Gson;
 
-public class GetScheduleIdOrgTest {
+public class GetScheduleIdParTest {
 
 	Context createContext(String apiCall) {
 		TestContext ctx = new TestContext();
@@ -69,10 +72,10 @@ public class GetScheduleIdOrgTest {
 		Assert.assertEquals(200, code);
 
 		//----------------get ID-----------------
-		OrganizerGetScheduleIdHandler handlerGet = new OrganizerGetScheduleIdHandler();
+		ParticipantGetScheduleIdHandler handlerGet = new ParticipantGetScheduleIdHandler();
 		//----------wrong ID------------
-		String secretCode = "";
-		OrganizerGetScheduleIdRequest ar1 = new OrganizerGetScheduleIdRequest(secretCode);
+		String releaseCode = "";
+		ParticipantGetScheduleIdRequest ar1 = new ParticipantGetScheduleIdRequest(releaseCode);
 
 		ccRequest = new Gson().toJson(ar1);
 		jsonRequest = new Gson().toJson(new PostRequest(ccRequest));
@@ -83,19 +86,19 @@ public class GetScheduleIdOrgTest {
 		handlerGet.handleRequest(input, output, createContext("list"));
 		post = new Gson().fromJson(output.toString(), PostResponse.class);
 
-		OrganizerGetScheduleIdResponse respShow = 
-				new Gson().fromJson(post.body, OrganizerGetScheduleIdResponse.class);
+		ParticipantGetScheduleIdResponse respShow = 
+				new Gson().fromJson(post.body, ParticipantGetScheduleIdResponse.class);
 		System.out.println(respShow);
 
 		msg = respShow.getResponse();
 		code = respShow.getHttpcode();
 
-		Assert.assertEquals("secretCode does not exist", msg);
+		Assert.assertEquals("releaseCode does not exist", msg);
 		Assert.assertEquals(405, code);
 		
 		//----------get success------------
-		secretCode = resp.getSecretCode();
-		OrganizerGetScheduleIdRequest ar2 = new OrganizerGetScheduleIdRequest(secretCode);
+		releaseCode = resp.getReleaseCode();
+		ParticipantGetScheduleIdRequest ar2 = new ParticipantGetScheduleIdRequest(releaseCode);
 
 		ccRequest = new Gson().toJson(ar2);
 		jsonRequest = new Gson().toJson(new PostRequest(ccRequest));
@@ -106,7 +109,7 @@ public class GetScheduleIdOrgTest {
 		handlerGet.handleRequest(input, output, createContext("list"));
 		post = new Gson().fromJson(output.toString(), PostResponse.class);
 
-		respShow = new Gson().fromJson(post.body, OrganizerGetScheduleIdResponse.class);
+		respShow = new Gson().fromJson(post.body, ParticipantGetScheduleIdResponse.class);
 		System.out.println(respShow);
 
 		msg = respShow.getResponse();

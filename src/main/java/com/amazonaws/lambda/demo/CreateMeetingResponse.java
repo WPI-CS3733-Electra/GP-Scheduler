@@ -20,4 +20,17 @@ public class CreateMeetingResponse {
 	public String toString() {
 		return "Response(" + response + ")";
 	}
+
+	public String getResponse() {
+		return response;
+	}
+
+	public int getHttpcode() {
+		return httpcode;
+	}
+
+	public String getSecretCode() {
+		return secretCode;
+	}
+	
 }
