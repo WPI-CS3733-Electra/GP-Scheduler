@@ -3,20 +3,15 @@ package com.amazonaws.lambda.demo;
 public class AdminShowRecentRequest {
 	
 	String code;
-	int days;
+	int hours;
 	
-	
-	public String getCode() {
-		return code;
-	}
-	public void setCode(String code) {
+	public AdminShowRecentRequest(String code, int hours) {
 		this.code = code;
+		this.hours = hours;
 	}
-	public int getDays() {
-		return days;
-	}
-	public void setDays(int days) {
-		this.days = days;
+	
+	public String toString() {
+		return "show recent created Schedule in "+ hours + "hour(s).";
 	}
 	
 
