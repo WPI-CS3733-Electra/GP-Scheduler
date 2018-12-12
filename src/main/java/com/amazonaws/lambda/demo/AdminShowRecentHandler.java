@@ -6,10 +6,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 
-
-
+import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -26,6 +28,7 @@ import com.google.gson.Gson;
 public class AdminShowRecentHandler implements RequestStreamHandler{
 	
 		public LambdaLogger logger = null;
+		String d;
 
 		/** Load from RDS, if it exists
 		 * 
@@ -40,14 +43,19 @@ public class AdminShowRecentHandler implements RequestStreamHandler{
 		ArrayList<BriefScheduleInfo> showRecent(int hours) throws Exception {
 			if (logger != null) { logger.log("Show Recent"); }
 		    AdminDAO dao = new AdminDAO();
-		    LocalDateTime dateTime = new LocalDateTime().minusHours(hours);
-		    //SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		    
+		    		//.minusHours(hours);
+		    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			//SimpleDateFormat formatterTime = new SimpleDateFormat("HH:mm:ss");
 			//String time = formatterTime.format(origin).toString();
-			//String date = formatter.format(origin).toString();
-			String date = dateTime.toString().substring(0, 9);
-			String time = dateTime.toString().substring(11, 18);
-			String recentDate =  date + " " + time;
+			
+		    Date date = new Date(System.currentTimeMillis() - 3600 * 1000 * hours);
+		    String recentDate = formatter.format(date).toString();
+			//LocalDateTime dateTime = new LocalDateTime().minusHours(hours);
+			//String date = dateTime.toString().substring(0, 9);
+			//String time = dateTime.toString().substring(11, 18);
+			//String recentDate =  date + " " + time;
+			d = recentDate;
 		    
 		    return dao.reviewRecent(recentDate);
 		}
