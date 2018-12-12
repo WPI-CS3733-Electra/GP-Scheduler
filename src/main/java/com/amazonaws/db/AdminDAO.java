@@ -130,7 +130,7 @@ public class AdminDAO {
 
 			ps = conn.prepareStatement("DELETE FROM Schedule WHERE createdDate<=?");
 			ps.setTimestamp(1, new Timestamp(TS_formatter.parse(oldDate).getTime()));
-			ps.executeQuery();
+			ps.execute();
 
 			ps.close();
 
