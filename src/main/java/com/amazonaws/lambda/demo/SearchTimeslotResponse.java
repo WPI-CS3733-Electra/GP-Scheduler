@@ -24,4 +24,17 @@ public class SearchTimeslotResponse {
 	public String toString() {
 		return "Response(" + response + ")";
 	}
+
+	public String getResponse() {
+		return response;
+	}
+
+	public int getHttpcode() {
+		return httpcode;
+	}
+
+	public ArrayList<SearchResult> getAvailableSlotsItems() {
+		return availableSlotsItems;
+	}
+	
 }

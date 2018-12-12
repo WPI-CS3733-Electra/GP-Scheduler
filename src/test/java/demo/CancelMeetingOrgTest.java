@@ -20,25 +20,20 @@ import com.amazonaws.lambda.demo.CreateScheduleResponse;
 import com.amazonaws.lambda.demo.DeleteTimeslotsByDayHandler;
 import com.amazonaws.lambda.demo.DeleteTimeslotsByDayRequest;
 import com.amazonaws.lambda.demo.DeleteTimeslotsByDayResponse;
-import com.amazonaws.lambda.demo.OrganizerGetScheduleIdHandler;
-import com.amazonaws.lambda.demo.OrganizerGetScheduleIdRequest;
-import com.amazonaws.lambda.demo.OrganizerGetScheduleIdResponse;
+import com.amazonaws.lambda.demo.OrganizerCancelMeetingHandler;
+import com.amazonaws.lambda.demo.OrganizerCancelMeetingRequest;
+import com.amazonaws.lambda.demo.OrganizerCancelMeetingResponse;
 import com.amazonaws.lambda.demo.PostRequest;
 import com.amazonaws.lambda.demo.PostResponse;
-import com.amazonaws.lambda.demo.SearchTimeslotHandler;
-import com.amazonaws.lambda.demo.SearchTimeslotRequest;
-import com.amazonaws.lambda.demo.SearchTimeslotResponse;
 import com.amazonaws.lambda.demo.ShowWeekScheduleHandler;
 import com.amazonaws.lambda.demo.ShowWeekScheduleRequest;
 import com.amazonaws.lambda.demo.ShowWeekScheduleResponse;
 import com.amazonaws.model.Day;
-import com.amazonaws.model.Schedule;
 import com.amazonaws.model.Timeslot;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.gson.Gson;
 
-public class CreateMeetingParTest {
-
+public class CancelMeetingOrgTest {
 	Context createContext(String apiCall) {
 		TestContext ctx = new TestContext();
 		ctx.setFunctionName(apiCall);
@@ -46,7 +41,7 @@ public class CreateMeetingParTest {
 	}
 
 	@Test
-	public void testCreateMeetingPar() throws IOException {
+	public void testCancelMeetingOrg() throws IOException {
 		CreateScheduleHandler handler = new CreateScheduleHandler();
 
 		//------------create schedule--------------
@@ -58,7 +53,7 @@ public class CreateMeetingParTest {
 		String endTime = "15:00";
 		int timePeriod  = 15;
 
-		
+
 		CreateScheduleRequest arCreate = new CreateScheduleRequest
 				(name, author, startDate, endDate, startTime, endTime, timePeriod);
 
@@ -94,42 +89,78 @@ public class CreateMeetingParTest {
 
 		ShowWeekScheduleResponse respShow = new Gson().fromJson(post.body, ShowWeekScheduleResponse.class);
 		System.out.println(respShow);
-		
+
 		//------------------------------timeslot------------------------------------------
-				//------------close-----------------
-				DeleteTimeslotsByDayHandler handlerDel = new DeleteTimeslotsByDayHandler();
+		//------------close-----------------
+		DeleteTimeslotsByDayHandler handlerDel = new DeleteTimeslotsByDayHandler();
 
-//				Timeslot ts = respShow.getSchedule().getDays().get(0).getTimeslots().get(0); //first day 10:00
-//				String tsId = ts.getId();
-				Day day = respShow.getSchedule().getDays().get(1);
-				String dayId = day.getId();
-				
-				DeleteTimeslotsByDayRequest arDel = new DeleteTimeslotsByDayRequest(dayId);
+		Day day = respShow.getSchedule().getDays().get(0); //first day
+		String dayId = day.getId();
 
-				ccRequest = new Gson().toJson(arDel);
-				jsonRequest = new Gson().toJson(new PostRequest(ccRequest)); //create and put body to request
+//		DeleteTimeslotsByDayRequest arDel = new DeleteTimeslotsByDayRequest(dayId);
+//
+//		ccRequest = new Gson().toJson(arDel);
+//		jsonRequest = new Gson().toJson(new PostRequest(ccRequest)); //create and put body to request
+//
+//		input = new ByteArrayInputStream(jsonRequest.getBytes());
+//		output = new ByteArrayOutputStream();
+//
+//		handlerDel.handleRequest(input, output, createContext("delete"));
+//
+//		post = new Gson().fromJson(output.toString(), PostResponse.class);
+//		DeleteTimeslotsByDayResponse respDel = new Gson().fromJson(post.body, DeleteTimeslotsByDayResponse.class);
+//
+//		System.out.println(respDel);
 
-				input = new ByteArrayInputStream(jsonRequest.getBytes());
-				output = new ByteArrayOutputStream();
-
-				handlerDel.handleRequest(input, output, createContext("delete"));
-
-				post = new Gson().fromJson(output.toString(), PostResponse.class);
-				DeleteTimeslotsByDayResponse respDel = new Gson().fromJson(post.body, DeleteTimeslotsByDayResponse.class);
-				//		OpenTimeslotResponse resp1 = new Gson().fromJson(post.body, OpenTimeslotResponse.class);
-
-				System.out.println(respDel);
-				
 		//------------------------------meeting------------------------------------------
 		//------------create success--------------
 
 		CreateMeetingHandler handlerCreate = new CreateMeetingHandler();
-		
+
 		String partInfo = "DNE@wpi.com";
-		Timeslot ts = respShow.getSchedule().getDays().get(0).getTimeslots().get(0); //first day 10:00
+		Timeslot ts = day.getTimeslots().get(0); //first day 10:00
 		String timeslotId = ts.getId();
 
-		CreateMeetingRequest ar1 = new CreateMeetingRequest(partInfo, timeslotId);
+		CreateMeetingRequest arCre = new CreateMeetingRequest(partInfo, timeslotId);
+
+		ccRequest = new Gson().toJson(arCre);
+		jsonRequest = new Gson().toJson(new PostRequest(ccRequest)); //create and put body to request
+
+		input = new ByteArrayInputStream(jsonRequest.getBytes());
+		output = new ByteArrayOutputStream();
+
+		handlerCreate.handleRequest(input, output, createContext("create"));
+
+		post = new Gson().fromJson(output.toString(), PostResponse.class);
+		CreateMeetingResponse respCre = new Gson().fromJson(post.body, CreateMeetingResponse.class);
+
+		System.out.println(respCre);
+
+		//---------------show schedule------------------
+
+		ShowWeekScheduleRequest arShow1 = new ShowWeekScheduleRequest(ScheduleID, 1);
+
+		ccRequest = new Gson().toJson(arShow1);
+		jsonRequest = new Gson().toJson(new PostRequest(ccRequest));
+
+		input = new ByteArrayInputStream(jsonRequest.getBytes());
+		output = new ByteArrayOutputStream();
+
+		handlerShow.handleRequest(input, output, createContext("list"));
+		post = new Gson().fromJson(output.toString(), PostResponse.class);
+
+		ShowWeekScheduleResponse respShow1 = new Gson().fromJson(post.body, ShowWeekScheduleResponse.class);
+		System.out.println(respShow1);
+		
+		//------------cancel success--------------
+
+		OrganizerCancelMeetingHandler handlerCancel = new OrganizerCancelMeetingHandler();
+
+		ts = respShow1.getSchedule().getDays().get(0).getTimeslots().get(0); //first day 10:00
+
+		String meetingId = ts.getMeeting().getId();
+
+		OrganizerCancelMeetingRequest ar1 = new OrganizerCancelMeetingRequest(meetingId);
 
 		ccRequest = new Gson().toJson(ar1);
 		jsonRequest = new Gson().toJson(new PostRequest(ccRequest)); //create and put body to request
@@ -137,44 +168,18 @@ public class CreateMeetingParTest {
 		input = new ByteArrayInputStream(jsonRequest.getBytes());
 		output = new ByteArrayOutputStream();
 
-		handlerCreate.handleRequest(input, output, createContext("list"));
+		handlerCancel.handleRequest(input, output, createContext("delete"));
 
 		post = new Gson().fromJson(output.toString(), PostResponse.class);
-		CreateMeetingResponse resp1 = new Gson().fromJson(post.body, CreateMeetingResponse.class);
+		OrganizerCancelMeetingResponse resp1 = new Gson().fromJson(post.body, OrganizerCancelMeetingResponse.class);
 
 		System.out.println(resp1);
 
 		msg = resp1.getResponse();
 		code = resp1.getHttpcode();
-
+		
 		Assert.assertEquals("Success", msg.substring(0, Math.min(msg.length(), 7)));
 		Assert.assertEquals(200, code);
-
-		//------------create fail--------------
-		
-		ts = respShow.getSchedule().getDays().get(1).getTimeslots().get(0); //first day 10:00
-		timeslotId = ts.getId();
-
-		CreateMeetingRequest ar2 = new CreateMeetingRequest(partInfo, timeslotId);
-
-		ccRequest = new Gson().toJson(ar2);
-		jsonRequest = new Gson().toJson(new PostRequest(ccRequest)); //create and put body to request
-
-		input = new ByteArrayInputStream(jsonRequest.getBytes());
-		output = new ByteArrayOutputStream();
-
-		handlerCreate.handleRequest(input, output, createContext("list"));
-
-		post = new Gson().fromJson(output.toString(), PostResponse.class);
-		CreateMeetingResponse resp2 = new Gson().fromJson(post.body, CreateMeetingResponse.class);
-
-		System.out.println(resp2);
-
-		msg = resp2.getResponse();
-		code = resp2.getHttpcode();
-
-		Assert.assertEquals("Unable", msg.substring(0, Math.min(msg.length(), 6)));
-		Assert.assertEquals(403, code);
+	
 	}
-
 }

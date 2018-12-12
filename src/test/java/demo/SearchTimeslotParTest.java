@@ -11,18 +11,15 @@ import java.io.OutputStream;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.amazonaws.lambda.demo.CreateMeetingHandler;
-import com.amazonaws.lambda.demo.CreateMeetingRequest;
-import com.amazonaws.lambda.demo.CreateMeetingResponse;
 import com.amazonaws.lambda.demo.CreateScheduleHandler;
 import com.amazonaws.lambda.demo.CreateScheduleRequest;
 import com.amazonaws.lambda.demo.CreateScheduleResponse;
-import com.amazonaws.lambda.demo.DeleteTimeslotsByDayHandler;
-import com.amazonaws.lambda.demo.DeleteTimeslotsByDayRequest;
-import com.amazonaws.lambda.demo.DeleteTimeslotsByDayResponse;
-import com.amazonaws.lambda.demo.OrganizerGetScheduleIdHandler;
-import com.amazonaws.lambda.demo.OrganizerGetScheduleIdRequest;
-import com.amazonaws.lambda.demo.OrganizerGetScheduleIdResponse;
+import com.amazonaws.lambda.demo.DeleteTimeslotsByTimeHandler;
+import com.amazonaws.lambda.demo.DeleteTimeslotsByTimeRequest;
+import com.amazonaws.lambda.demo.DeleteTimeslotsByTimeResponse;
+import com.amazonaws.lambda.demo.OpenTimeslotsByTimeHandler;
+import com.amazonaws.lambda.demo.OpenTimeslotsByTimeRequest;
+import com.amazonaws.lambda.demo.OpenTimeslotsByTimeResponse;
 import com.amazonaws.lambda.demo.PostRequest;
 import com.amazonaws.lambda.demo.PostResponse;
 import com.amazonaws.lambda.demo.SearchTimeslotHandler;
@@ -31,13 +28,10 @@ import com.amazonaws.lambda.demo.SearchTimeslotResponse;
 import com.amazonaws.lambda.demo.ShowWeekScheduleHandler;
 import com.amazonaws.lambda.demo.ShowWeekScheduleRequest;
 import com.amazonaws.lambda.demo.ShowWeekScheduleResponse;
-import com.amazonaws.model.Day;
-import com.amazonaws.model.Schedule;
-import com.amazonaws.model.Timeslot;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.gson.Gson;
 
-public class CreateMeetingParTest {
+public class SearchTimeslotParTest {
 
 	Context createContext(String apiCall) {
 		TestContext ctx = new TestContext();
@@ -46,7 +40,8 @@ public class CreateMeetingParTest {
 	}
 
 	@Test
-	public void testCreateMeetingPar() throws IOException {
+	public void testSearchTimeslotPar() throws IOException {
+
 		CreateScheduleHandler handler = new CreateScheduleHandler();
 
 		//------------create schedule--------------
@@ -94,42 +89,16 @@ public class CreateMeetingParTest {
 
 		ShowWeekScheduleResponse respShow = new Gson().fromJson(post.body, ShowWeekScheduleResponse.class);
 		System.out.println(respShow);
-		
+
 		//------------------------------timeslot------------------------------------------
-				//------------close-----------------
-				DeleteTimeslotsByDayHandler handlerDel = new DeleteTimeslotsByDayHandler();
+		int year = 2018; 
+		int month = 1;
+		int dayOfWeek = 5; 
+		int dayOfMonth = 5;
+		//------------search success--------------
+		SearchTimeslotHandler handlerCreate = new SearchTimeslotHandler();
 
-//				Timeslot ts = respShow.getSchedule().getDays().get(0).getTimeslots().get(0); //first day 10:00
-//				String tsId = ts.getId();
-				Day day = respShow.getSchedule().getDays().get(1);
-				String dayId = day.getId();
-				
-				DeleteTimeslotsByDayRequest arDel = new DeleteTimeslotsByDayRequest(dayId);
-
-				ccRequest = new Gson().toJson(arDel);
-				jsonRequest = new Gson().toJson(new PostRequest(ccRequest)); //create and put body to request
-
-				input = new ByteArrayInputStream(jsonRequest.getBytes());
-				output = new ByteArrayOutputStream();
-
-				handlerDel.handleRequest(input, output, createContext("delete"));
-
-				post = new Gson().fromJson(output.toString(), PostResponse.class);
-				DeleteTimeslotsByDayResponse respDel = new Gson().fromJson(post.body, DeleteTimeslotsByDayResponse.class);
-				//		OpenTimeslotResponse resp1 = new Gson().fromJson(post.body, OpenTimeslotResponse.class);
-
-				System.out.println(respDel);
-				
-		//------------------------------meeting------------------------------------------
-		//------------create success--------------
-
-		CreateMeetingHandler handlerCreate = new CreateMeetingHandler();
-		
-		String partInfo = "DNE@wpi.com";
-		Timeslot ts = respShow.getSchedule().getDays().get(0).getTimeslots().get(0); //first day 10:00
-		String timeslotId = ts.getId();
-
-		CreateMeetingRequest ar1 = new CreateMeetingRequest(partInfo, timeslotId);
+		SearchTimeslotRequest ar1 = new SearchTimeslotRequest(ScheduleID, year, month, dayOfWeek, dayOfMonth, startTime, endTime);
 
 		ccRequest = new Gson().toJson(ar1);
 		jsonRequest = new Gson().toJson(new PostRequest(ccRequest)); //create and put body to request
@@ -140,7 +109,7 @@ public class CreateMeetingParTest {
 		handlerCreate.handleRequest(input, output, createContext("list"));
 
 		post = new Gson().fromJson(output.toString(), PostResponse.class);
-		CreateMeetingResponse resp1 = new Gson().fromJson(post.body, CreateMeetingResponse.class);
+		SearchTimeslotResponse resp1 = new Gson().fromJson(post.body, SearchTimeslotResponse.class);
 
 		System.out.println(resp1);
 
@@ -150,12 +119,10 @@ public class CreateMeetingParTest {
 		Assert.assertEquals("Success", msg.substring(0, Math.min(msg.length(), 7)));
 		Assert.assertEquals(200, code);
 
-		//------------create fail--------------
+		//------------search fail--------------
+		year = 2017; 
 		
-		ts = respShow.getSchedule().getDays().get(1).getTimeslots().get(0); //first day 10:00
-		timeslotId = ts.getId();
-
-		CreateMeetingRequest ar2 = new CreateMeetingRequest(partInfo, timeslotId);
+		SearchTimeslotRequest ar2 = new SearchTimeslotRequest(ScheduleID, year, month, dayOfWeek, dayOfMonth, startTime, endTime);
 
 		ccRequest = new Gson().toJson(ar2);
 		jsonRequest = new Gson().toJson(new PostRequest(ccRequest)); //create and put body to request
@@ -163,18 +130,17 @@ public class CreateMeetingParTest {
 		input = new ByteArrayInputStream(jsonRequest.getBytes());
 		output = new ByteArrayOutputStream();
 
-		handlerCreate.handleRequest(input, output, createContext("list"));
+		handlerCreate.handleRequest(input, output, createContext("create"));
 
 		post = new Gson().fromJson(output.toString(), PostResponse.class);
-		CreateMeetingResponse resp2 = new Gson().fromJson(post.body, CreateMeetingResponse.class);
+		SearchTimeslotResponse resp2 = new Gson().fromJson(post.body, SearchTimeslotResponse.class);
 
 		System.out.println(resp2);
 
 		msg = resp2.getResponse();
 		code = resp2.getHttpcode();
-
-		Assert.assertEquals("Unable", msg.substring(0, Math.min(msg.length(), 6)));
-		Assert.assertEquals(403, code);
+		
+		Assert.assertEquals("Open timeslot does not exists under your search conditions", msg);
+		Assert.assertEquals(405, code);
 	}
-
 }
