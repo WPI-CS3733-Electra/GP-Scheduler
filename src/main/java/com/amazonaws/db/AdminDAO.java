@@ -80,7 +80,7 @@ public class AdminDAO {
 							+ "FROM Schedule s INNER JOIN Day d ON s.scheduleUUID = d.scheduleUUID "
 							+ "INNER JOIN Timeslot t ON d.dayUUID = t.dayUUID "
 							+ "LEFT JOIN Meeting m ON t.timeslotUUID = m.timeslotUUID " + "WHERE s.createdDate>=? "
-							+ "GROUP BY s.scheduleUUID " + "ORDER BY s.createdDate;");
+							+ "GROUP BY s.scheduleUUID " + "ORDER BY s.createdDate DESC;");
 			ps.setTimestamp(1, new Timestamp(TS_formatter.parse(recentDate).getTime()));
 			ResultSet resultSet = ps.executeQuery();
 
