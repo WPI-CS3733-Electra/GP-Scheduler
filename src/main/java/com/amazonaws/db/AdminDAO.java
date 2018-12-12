@@ -74,6 +74,9 @@ public class AdminDAO {
 	public ArrayList<BriefScheduleInfo> reviewRecent(String recentDate) throws Exception {
 		try {
 			ArrayList<BriefScheduleInfo> bal = new ArrayList<BriefScheduleInfo>();
+			if (recentDate==null) {
+				return bal;
+			}
 
 			PreparedStatement ps = conn.prepareStatement(
 					"SELECT s.scheduleUUID, name, author, createdDate, startDate, endDate, count(t.timeslotUUID) AS countTimeslot, count(m.meetingUUID) AS countMeeting "
@@ -112,6 +115,9 @@ public class AdminDAO {
 	public int deleteOld(String oldDate) throws Exception {
 		try {
 			int scheduleDeleted = 0;
+			if (oldDate==null) {
+				return scheduleDeleted;
+			}
 
 			PreparedStatement ps = conn
 					.prepareStatement("SELECT count(scheduleUUID) AS totalSchedule FROM Schedule WHERE createdDate<=?");
