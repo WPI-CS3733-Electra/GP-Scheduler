@@ -8,15 +8,12 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.UUID;
 
 import org.joda.time.LocalDate;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import com.amazonaws.db.AdminDAO;
-import com.amazonaws.db.MeetingDAO;
-import com.amazonaws.model.Meeting;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
@@ -37,11 +34,16 @@ public class AdminClearDataHandler implements RequestStreamHandler{
 	
 	int deleteOld(int days) throws Exception {
 		if (logger != null) { logger.log("Clear DATA"); }
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
-	    String date = new Date().toString();
-	    String needDate = LocalDate.parse(date).minusDays(days).toString();
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat formatterTime = new SimpleDateFormat("HH:mm:ss");
+		Date origin = new Date();
+		String time = formatterTime.format(origin).toString();
+		String date = formatter.format(origin).toString();
+	    //String needDate = LocalDate.parse(date).minusDays(5).toString();
+	    LocalDate datef = LocalDate.parse(date).minusDays(days);
 	    AdminDAO dao = new AdminDAO();
-	    return dao.deleteOld(needDate);
+	    
+	    return dao.deleteOld(datef.toString() + " " + time);
 	}
 	@Override
 	public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
@@ -95,7 +97,7 @@ public class AdminClearDataHandler implements RequestStreamHandler{
 			AdminClearDataResponse resp;
 			try { 
 				if (Oath(req.code)) {
-					resp = new AdminClearDataResponse("Successfully Created Meeting:",deleteOld(req.days));
+					resp = new AdminClearDataResponse("Clear Data Succeed",200,deleteOld(req.days));
 				} else {
 					resp = new AdminClearDataResponse("Authentication Failed: ", 405);
 				}
