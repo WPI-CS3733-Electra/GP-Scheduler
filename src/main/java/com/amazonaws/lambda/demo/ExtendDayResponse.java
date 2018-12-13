@@ -18,4 +18,13 @@ public class ExtendDayResponse {
 	public String toString() {
 		return "Response(" + response + ")";
 	}
+
+	public String getResponse() {
+		return response;
+	}
+
+	public int getHttpcode() {
+		return httpcode;
+	}
+	
 }

@@ -25,6 +25,18 @@ public class AdminShowRecentResponse {
 		return "Response(" + response + ")";
 	}
 
+	public ArrayList<BriefScheduleInfo> getInfo() {
+		return info;
+	}
+
+	public String getResponse() {
+		return response;
+	}
+
+	public int getHttpcode() {
+		return httpcode;
+	}
+
 	
 
 }

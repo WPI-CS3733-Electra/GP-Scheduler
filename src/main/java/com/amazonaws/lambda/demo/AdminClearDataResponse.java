@@ -20,6 +20,15 @@ public class AdminClearDataResponse {
 		return "Response(" + response + ")";
 	}
 
-	
+	public int getNumber() {
+		return number;
+	}
 
+	public String getResponse() {
+		return response;
+	}
+
+	public int getHttpcode() {
+		return httpcode;
+	}
 }
